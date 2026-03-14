@@ -2,16 +2,43 @@ let picks={}
 let precio=10
 let total=0
 let quinelas=[]
+let dobles=0
+let triples=0
 
-function pick(p,v,b){
+function pick(partido,valor,btn){
 
-picks[p]=v
+if(!picks[partido]) picks[partido]=[]
 
-let fila=b.parentNode.parentNode
+if(picks[partido].includes(valor)){
 
-fila.querySelectorAll("button").forEach(x=>x.style.background="")
+picks[partido]=picks[partido].filter(v=>v!==valor)
+btn.classList.remove("activo")
 
-b.style.background="green"
+}else{
+
+picks[partido].push(valor)
+btn.classList.add("activo")
+
+}
+
+contarExtras()
+
+}
+
+function contarExtras(){
+
+dobles=0
+triples=0
+
+for(let p in picks){
+
+if(picks[p].length==2) dobles++
+if(picks[p].length==3) triples++
+
+}
+
+document.getElementById("dobles").innerText=dobles
+document.getElementById("triples").innerText=triples
 
 }
 
@@ -19,7 +46,13 @@ function limpiar(){
 
 picks={}
 
-document.querySelectorAll("button").forEach(b=>b.style.background="")
+document.querySelectorAll("button").forEach(b=>b.classList.remove("activo"))
+
+dobles=0
+triples=0
+
+document.getElementById("dobles").innerText=0
+document.getElementById("triples").innerText=0
 
 }
 
@@ -43,7 +76,7 @@ function agregar(){
 
 quinelas.push({...picks})
 
-total += precio
+total+=precio
 
 document.getElementById("total").innerText=total
 
@@ -65,7 +98,7 @@ texto+="Quiniela "+(i+1)+"\n"
 
 for(let p in q){
 
-texto+="Partido "+p+" : "+q[p]+"\n"
+texto+="Partido "+p+" : "+q[p].join("/")+"\n"
 
 }
 
@@ -73,7 +106,10 @@ texto+="\n"
 
 })
 
-texto+="Total: $"+total
+texto+="Dobles: "+dobles+"\n"
+texto+="Triples: "+triples+"\n"
+
+texto+="\nTotal: $"+total
 
 let url="https://wa.me/524531467407?text="+encodeURIComponent(texto)
 
