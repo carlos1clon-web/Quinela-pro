@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Quiniela México</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h1>QUINIELAS MÉXICO</h1>
+<h2>DOMINGUERA</h2>
+
+<table>
+
+<tr>
+<th>Local</th>
+<th>L</th>
+<th>E</th>
+<th>V</th>
+<th>Visitante</th>
+</tr>
+
+<tr>
+<td>Fluminense</td>
+<td><button onclick="pick(1,'L',this)">L</button></td>
+<td><button onclick="pick(1,'E',this)">E</button></td>
+<td><button onclick="pick(1,'V',this)">V</button></td>
+<td>Paranaense</td>
+</tr>
+
+<tr>
+<td>Santos</td>
+<td><button onclick="pick(2,'L',this)">L</button></td>
+<td><button onclick="pick(2,'E',this)">E</button></td>
+<td><button onclick="pick(2,'V',this)">V</button></td>
+<td>Corinthians</td>
+</tr>
+
+<tr>
+<td>Internacional</td>
+<td><button onclick="pick(3,'L',this)">L</button></td>
+<td><button onclick="pick(3,'E',this)">E</button></td>
+<td><button onclick="pick(3,'V',this)">V</button></td>
+<td>Bahia</td>
+</tr>
+
+</table>
+
+<input type="text" id="nombre" placeholder="Nombre del participante">
+
+<button onclick="limpiar()">Limpiar</button>
+
+<button onclick="aleatorio()">Aleatorio</button>
+
+<button onclick="enviar()">Enviar por WhatsApp</button>
+
+<script src="script.js"></script>
+
+</body>
+</html>
