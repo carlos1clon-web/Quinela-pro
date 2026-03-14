@@ -8,38 +8,14 @@
 <title>Quinielas México</title>
 
 <link rel="stylesheet" href="style.css">
-<script>
-function calcularTotal() {
-  let partidos = document.querySelectorAll(".partido");
-  let combinaciones = 1;
 
-  partidos.forEach(partido => {
-    let seleccionadas = partido.querySelectorAll("input[type=checkbox]:checked").length;
-
-    if (seleccionadas === 0) {
-      seleccionadas = 1;
-    }
-
-    combinaciones = combinaciones * seleccionadas;
-  });
-
-  let precio = 10; // precio por combinación
-  let total = combinaciones * precio;
-
-  document.getElementById("total").innerText = "$" + total;
-}
-
-document.querySelectorAll("input[type=checkbox]").forEach(c => {
-  c.addEventListener("change", calcularTotal);
-});
-</script>
 </head>
 
 <body>
 
 <h1>QUINIELAS MÉXICO</h1>
-<h2>
-  <table>
+
+<table border="1">
 
 <tr>
 <th>Local</th>
@@ -51,33 +27,81 @@ document.querySelectorAll("input[type=checkbox]").forEach(c => {
 
 <tr>
 <td>Fluminense</td>
-<td><input type="checkbox" value="L" data-partido="1"></td>
-<td><input type="checkbox" value="E" data-partido="1"></td>
-<td><input type="checkbox" value="V" data-partido="1"></td>
+<td><input type="checkbox" data-partido="1"></td>
+<td><input type="checkbox" data-partido="1"></td>
+<td><input type="checkbox" data-partido="1"></td>
 <td>Paranaense</td>
 </tr>
 
 <tr>
 <td>Santos</td>
-<td><input type="checkbox" value="L" data-partido="2"></td>
-<td><input type="checkbox" value="E" data-partido="2"></td>
-<td><input type="checkbox" value="V" data-partido="2"></td>
+<td><input type="checkbox" data-partido="2"></td>
+<td><input type="checkbox" data-partido="2"></td>
+<td><input type="checkbox" data-partido="2"></td>
 <td>Corinthians</td>
 </tr>
 
 <tr>
 <td>Internacional</td>
-<td><input type="checkbox" value="L" data-partido="3"></td>
-<td><input type="checkbox" value="E" data-partido="3"></td>
-<td><input type="checkbox" value="V" data-partido="3"></td>
+<td><input type="checkbox" data-partido="3"></td>
+<td><input type="checkbox" data-partido="3"></td>
+<td><input type="checkbox" data-partido="3"></td>
 <td>Bahia</td>
+</tr>
+
+<tr>
+<td>Equipo 4</td>
+<td><input type="checkbox" data-partido="4"></td>
+<td><input type="checkbox" data-partido="4"></td>
+<td><input type="checkbox" data-partido="4"></td>
+<td>Equipo 4B</td>
+</tr>
+
+<tr>
+<td>Equipo 5</td>
+<td><input type="checkbox" data-partido="5"></td>
+<td><input type="checkbox" data-partido="5"></td>
+<td><input type="checkbox" data-partido="5"></td>
+<td>Equipo 5B</td>
+</tr>
+
+<tr>
+<td>Equipo 6</td>
+<td><input type="checkbox" data-partido="6"></td>
+<td><input type="checkbox" data-partido="6"></td>
+<td><input type="checkbox" data-partido="6"></td>
+<td>Equipo 6B</td>
+</tr>
+
+<tr>
+<td>Equipo 7</td>
+<td><input type="checkbox" data-partido="7"></td>
+<td><input type="checkbox" data-partido="7"></td>
+<td><input type="checkbox" data-partido="7"></td>
+<td>Equipo 7B</td>
+</tr>
+
+<tr>
+<td>Equipo 8</td>
+<td><input type="checkbox" data-partido="8"></td>
+<td><input type="checkbox" data-partido="8"></td>
+<td><input type="checkbox" data-partido="8"></td>
+<td>Equipo 8B</td>
+</tr>
+
+<tr>
+<td>Equipo 9</td>
+<td><input type="checkbox" data-partido="9"></td>
+<td><input type="checkbox" data-partido="9"></td>
+<td><input type="checkbox" data-partido="9"></td>
+<td>Equipo 9B</td>
 </tr>
 
 </table>
 
 <div class="info">
 
-<p>💰 Precio de la quiniela: $10</p>
+<p>💰 Precio por combinación: $10</p>
 <p>⏰ Cierre: Sábado 11:50 PM</p>
 
 <p>
@@ -88,23 +112,116 @@ Ir a Facebook Quinielas México
 
 </div>
 
-<h3>Total: $<span id="total">0</span></h3>
+<h2>Total a pagar: <span id="total">$0</span></h2>
 
 <input type="text" id="nombre" placeholder="Nombre del participante">
 
-<div>
+<br><br>
 
 <button onclick="limpiar()">Limpiar</button>
 
 <button onclick="aleatorio()">Aleatorio</button>
 
-<button onclick="agregar()">Agregar quiniela</button>
-
-</div>
-
 <button onclick="enviar()">Enviar por WhatsApp</button>
 
-<script src="script.js"></script>
+<script>
+
+function calcularTotal(){
+
+let partidos = {};
+let checkboxes = document.querySelectorAll("input[type=checkbox]");
+
+checkboxes.forEach(c => {
+
+let partido = c.dataset.partido;
+
+if(!partidos[partido]){
+partidos[partido] = 0;
+}
+
+if(c.checked){
+partidos[partido]++;
+}
+
+});
+
+let combinaciones = 1;
+
+for(let p in partidos){
+
+let seleccionadas = partidos[p];
+
+if(seleccionadas === 0){
+seleccionadas = 1;
+}
+
+combinaciones *= seleccionadas;
+
+}
+
+let precio = 10;
+let total = combinaciones * precio;
+
+document.getElementById("total").innerText = "$" + total;
+
+}
+
+document.querySelectorAll("input[type=checkbox]").forEach(c => {
+c.addEventListener("change", calcularTotal);
+});
+
+function limpiar(){
+document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
+calcularTotal();
+}
+
+function aleatorio(){
+
+document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
+
+for(let i=1;i<=9;i++){
+
+let opcion = Math.floor(Math.random()*3);
+
+let checkboxes = document.querySelectorAll(`input[data-partido="${i}"]`);
+
+checkboxes[opcion].checked = true;
+
+}
+
+calcularTotal();
+
+}
+
+function enviar(){
+
+let nombre = document.getElementById("nombre").value;
+
+let texto = "Quiniela de " + nombre + "%0A";
+
+for(let i=1;i<=9;i++){
+
+let seleccion = [];
+
+document.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
+if(c.checked){
+if(index===0) seleccion.push("L");
+if(index===1) seleccion.push("E");
+if(index===2) seleccion.push("V");
+}
+});
+
+texto += "Partido " + i + ": " + seleccion.join(",") + "%0A";
+
+}
+
+texto += "Total: " + document.getElementById("total").innerText;
+
+window.open("https://wa.me/?text=" + texto);
+
+}
+
+</script>
 
 </body>
 </html>
