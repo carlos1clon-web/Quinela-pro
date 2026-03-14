@@ -8,7 +8,31 @@
 <title>Quinielas México</title>
 
 <link rel="stylesheet" href="style.css">
+<script>
+function calcularTotal() {
+  let partidos = document.querySelectorAll(".partido");
+  let combinaciones = 1;
 
+  partidos.forEach(partido => {
+    let seleccionadas = partido.querySelectorAll("input[type=checkbox]:checked").length;
+
+    if (seleccionadas === 0) {
+      seleccionadas = 1;
+    }
+
+    combinaciones = combinaciones * seleccionadas;
+  });
+
+  let precio = 10; // precio por combinación
+  let total = combinaciones * precio;
+
+  document.getElementById("total").innerText = "$" + total;
+}
+
+document.querySelectorAll("input[type=checkbox]").forEach(c => {
+  c.addEventListener("change", calcularTotal);
+});
+</script>
 </head>
 
 <body>
