@@ -35,6 +35,8 @@ b.style.background=""
 
 function aleatorio(){
 
+limpiar()
+
 document.querySelectorAll("tr").forEach((fila,i)=>{
 
 if(i==0)return
@@ -51,13 +53,68 @@ botones[r].click()
 
 function agregar(){
 
+let nombre=document.getElementById("nombre").value.trim()
+
+if(nombre===""){
+alert("Escribe tu nombre primero")
+return
+}
+
+if(Object.keys(picks).length===0){
+alert("Selecciona una quiniela primero")
+return
+}
+
 quinelas.push({...picks})
 
 total+=precio
 
-document.getElementById("total").innerText=total
+document.getElementById("total").innerText="$"+total
+
+mostrarQuinielas()
 
 limpiar()
+
+}
+
+function mostrarQuinielas(){
+
+let contenedor=document.getElementById("listaQuinielas")
+
+contenedor.innerHTML=""
+
+quinelas.forEach((q,index)=>{
+
+let texto=[]
+
+for(let p in q){
+texto.push(q[p].join("/"))
+}
+
+let div=document.createElement("div")
+
+div.className="quinielaGuardada"
+
+div.innerHTML=`
+<span>${texto.join(" ")}</span>
+<button onclick="eliminarQuiniela(${index})">❌</button>
+`
+
+contenedor.appendChild(div)
+
+})
+
+}
+
+function eliminarQuiniela(i){
+
+quinelas.splice(i,1)
+
+total-=precio
+
+document.getElementById("total").innerText="$"+total
+
+mostrarQuinielas()
 
 }
 
