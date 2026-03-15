@@ -10,14 +10,14 @@ calcularTotal()
 
 function calcularTotal(){
 
-let partidos={}
+let partidos = {}
 
 document.querySelectorAll("input[type=checkbox]").forEach(c=>{
 
-let p=c.dataset.partido
+let p = c.dataset.partido
 
 if(!partidos[p]){
-partidos[p]=0
+partidos[p] = 0
 }
 
 if(c.checked){
@@ -26,30 +26,31 @@ partidos[p]++
 
 })
 
-let combinaciones=1
+let combinaciones = 1
 
 for(let p in partidos){
 
-let sel=partidos[p]
+let sel = partidos[p]
 
-if(sel===0){
-sel=1
+if(sel === 0){
+sel = 1
 }
 
-combinaciones*=sel
+combinaciones *= sel
 
 }
 
-let totalActual=combinaciones*precio
+let totalActual = combinaciones * precio
 
-document.getElementById("total").innerText="$"+(totalGuardado+totalActual)
+document.getElementById("total").innerText =
+"$" + (totalGuardado + totalActual)
 
 }
 
 function limpiar(){
 
 document.querySelectorAll("input[type=checkbox]").forEach(c=>{
-c.checked=false
+c.checked = false
 })
 
 calcularTotal()
@@ -62,11 +63,12 @@ limpiar()
 
 for(let i=1;i<=9;i++){
 
-let checks=document.querySelectorAll(`input[data-partido="${i}"]`)
+let opciones =
+document.querySelectorAll(`input[data-partido="${i}"]`)
 
-let r=Math.floor(Math.random()*3)
+let r = Math.floor(Math.random()*3)
 
-checks[r].checked=true
+opciones[r].checked = true
 
 }
 
@@ -76,20 +78,22 @@ calcularTotal()
 
 function agregarQuiniela(){
 
-let nombre=document.getElementById("nombre").value.trim()
+let nombre = document.getElementById("nombre").value.trim()
 
 if(nombre===""){
 alert("Debes escribir tu nombre")
 return
 }
 
-let partidos=[]
+let partidos = []
 
 for(let i=1;i<=9;i++){
 
-let opciones=[]
+let opciones = []
 
-document.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
+document
+.querySelectorAll(`input[data-partido="${i}"]`)
+.forEach((c,index)=>{
 
 if(c.checked){
 
@@ -102,30 +106,14 @@ if(index===2) opciones.push("V")
 })
 
 if(opciones.length===0){
-opciones.push("-")
+opciones=["-"]
 }
 
 partidos.push(opciones)
 
 }
 
-let combinaciones=[[]]
-
-partidos.forEach(opciones=>{
-
-let nuevas=[]
-
-combinaciones.forEach(base=>{
-
-opciones.forEach(o=>{
-nuevas.push([...base,o])
-})
-
-})
-
-combinaciones=nuevas
-
-})
+let combinaciones = generarCombinaciones(partidos)
 
 combinaciones.forEach(c=>{
 quinelas.push(c)
@@ -141,9 +129,31 @@ calcularTotal()
 
 }
 
+function generarCombinaciones(arr){
+
+if(arr.length===0) return [[]]
+
+let primero = arr[0]
+let resto = generarCombinaciones(arr.slice(1))
+
+let resultado=[]
+
+primero.forEach(p=>{
+
+resto.forEach(r=>{
+resultado.push([p,...r])
+})
+
+})
+
+return resultado
+
+}
+
 function mostrarQuinielas(){
 
-let contenedor=document.getElementById("listaQuinielas")
+let contenedor =
+document.getElementById("listaQuinielas")
 
 contenedor.innerHTML=""
 
@@ -153,12 +163,9 @@ let div=document.createElement("div")
 
 div.className="quinielaGuardada"
 
-let texto=q.join(" ")
-
-div.innerHTML=`
-<span>${texto}</span>
-<button onclick="eliminar(${i})">❌</button>
-`
+div.innerHTML=
+q.join(" ") +
+` <button onclick="eliminar(${i})">❌</button>`
 
 contenedor.appendChild(div)
 
@@ -184,7 +191,8 @@ calcularTotal()
 
 function enviar(){
 
-let nombre=document.getElementById("nombre").value
+let nombre =
+document.getElementById("nombre").value
 
 if(nombre===""){
 alert("Escribe tu nombre")
@@ -196,7 +204,8 @@ alert("No hay quinielas agregadas")
 return
 }
 
-let texto="QUINIELAS LIGA MX\n\n"
+let texto =
+"QUINIELAS LIGA MX\n\n"
 
 texto+="Participante: "+nombre+"\n\n"
 
@@ -214,7 +223,9 @@ texto+="\n"
 
 texto+="Total: $"+totalGuardado
 
-let url="https://wa.me/5215610791509?text="+encodeURIComponent(texto)
+let url =
+"https://wa.me/5215610791509?text="
++encodeURIComponent(texto)
 
 window.open(url)
 
