@@ -1,34 +1,11 @@
-let picks={}
-let precio=10
-let total=0
-let quinelas=[]
-
-function pick(partido,valor,btn){
-
-if(!picks[partido]){
-picks[partido]=[]
-}
-
-if(picks[partido].includes(valor)){
-
-picks[partido]=picks[partido].filter(v=>v!==valor)
-btn.style.background=""
-
-}else{
-
-picks[partido].push(valor)
-btn.style.background="green"
-
-}
-
-}
+let precio = 10
+let total = 0
+let quinelas = []
 
 function limpiar(){
 
-picks={}
-
-document.querySelectorAll("table button").forEach(b=>{
-b.style.background=""
+document.querySelectorAll("input[type=checkbox]").forEach(c=>{
+c.checked=false
 })
 
 }
@@ -37,17 +14,15 @@ function aleatorio(){
 
 limpiar()
 
-document.querySelectorAll("tr").forEach((fila,i)=>{
+for(let i=1;i<=9;i++){
 
-if(i==0)return
-
-let botones=fila.querySelectorAll("button")
+let opciones=document.querySelectorAll(`input[data-partido="${i}"]`)
 
 let r=Math.floor(Math.random()*3)
 
-botones[r].click()
+opciones[r].checked=true
 
-})
+}
 
 }
 
@@ -60,12 +35,36 @@ alert("Escribe tu nombre primero")
 return
 }
 
-if(Object.keys(picks).length===0){
-alert("Selecciona una quiniela primero")
+let seleccion=[]
+
+for(let i=1;i<=9;i++){
+
+let checks=document.querySelectorAll(`input[data-partido="${i}"]`)
+
+let letra="-"
+
+checks.forEach((c,index)=>{
+
+if(c.checked){
+
+if(index===0) letra="L"
+if(index===1) letra="E"
+if(index===2) letra="V"
+
+}
+
+})
+
+seleccion.push(letra)
+
+}
+
+if(seleccion.every(v=>v==="-" )){
+alert("Selecciona una quiniela")
 return
 }
 
-quinelas.push({...picks})
+quinelas.push(seleccion)
 
 total+=precio
 
@@ -83,21 +82,15 @@ let contenedor=document.getElementById("listaQuinielas")
 
 contenedor.innerHTML=""
 
-quinelas.forEach((q,index)=>{
-
-let texto=[]
-
-for(let p in q){
-texto.push(q[p].join("/"))
-}
+quinelas.forEach((q,i)=>{
 
 let div=document.createElement("div")
 
 div.className="quinielaGuardada"
 
 div.innerHTML=`
-<span>${texto.join(" ")}</span>
-<button onclick="eliminarQuiniela(${index})">❌</button>
+<span>${q.join(" ")}</span>
+<button onclick="eliminarQuiniela(${i})">❌</button>
 `
 
 contenedor.appendChild(div)
@@ -130,11 +123,9 @@ quinelas.forEach((q,i)=>{
 
 texto+="Quiniela "+(i+1)+"\n"
 
-for(let p in q){
-
-texto+="Partido "+p+" : "+q[p].join("/")+"\n"
-
-}
+q.forEach((p,j)=>{
+texto+="Partido "+(j+1)+" : "+p+"\n"
+})
 
 texto+="\n"
 
@@ -142,7 +133,7 @@ texto+="\n"
 
 texto+="Total: $"+total
 
-let url="https://wa.me/524531467407?text="+encodeURIComponent(texto)
+let url="https://wa.me/5215610791509?text="+encodeURIComponent(texto)
 
 window.open(url)
 
