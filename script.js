@@ -1,5 +1,6 @@
 let quinelas = [];
 let precio = 10;
+let total = 0;
 
 function calcularTotal(){
 
@@ -53,9 +54,9 @@ calcularTotal();
 
 function limpiar(){
 
-document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
-
-calcularTotal();
+document.querySelectorAll("input[type=checkbox]").forEach(c => {
+c.checked = false;
+});
 
 }
 
@@ -90,7 +91,7 @@ let seleccion = [];
 
 for(let i=1;i<=9;i++){
 
-let letra="-";
+let letra = "-";
 
 document.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
 
@@ -115,6 +116,10 @@ return;
 
 quinelas.push(seleccion);
 
+total += precio;
+
+document.getElementById("total").innerText = "$" + total;
+
 mostrarQuinielas();
 
 limpiar();
@@ -125,16 +130,16 @@ function mostrarQuinielas(){
 
 let contenedor = document.getElementById("listaQuinielas");
 
-contenedor.innerHTML="";
+contenedor.innerHTML = "";
 
 quinelas.forEach((q,i)=>{
 
-let div=document.createElement("div");
+let div = document.createElement("div");
 
-div.className="quinielaGuardada";
+div.className = "quinielaGuardada";
 
-div.innerHTML=`
-${q.join(" ")} 
+div.innerHTML = `
+${q.join(" ")}
 <button onclick="eliminar(${i})">❌</button>
 `;
 
@@ -148,6 +153,14 @@ function eliminar(i){
 
 quinelas.splice(i,1);
 
+total -= precio;
+
+if(total < 0){
+total = 0;
+}
+
+document.getElementById("total").innerText = "$" + total;
+
 mostrarQuinielas();
 
 }
@@ -156,25 +169,35 @@ function enviar(){
 
 let nombre = document.getElementById("nombre").value;
 
-let texto="QUINIELAS\n\n";
+if(nombre === ""){
+alert("Debes escribir tu nombre");
+return;
+}
 
-texto+="Participante: "+nombre+"\n\n";
+if(quinelas.length === 0){
+alert("No hay quinielas agregadas");
+return;
+}
+
+let texto = "QUINIELAS LIGA MX\n\n";
+
+texto += "Participante: " + nombre + "\n\n";
 
 quinelas.forEach((q,i)=>{
 
-texto+="Quiniela "+(i+1)+"\n";
+texto += "Quiniela " + (i+1) + "\n";
 
 q.forEach((p,j)=>{
-texto+="Partido "+(j+1)+": "+p+"\n";
+texto += "Partido " + (j+1) + ": " + p + "\n";
 });
 
-texto+="\n";
+texto += "\n";
 
 });
 
-texto+="Total: "+document.getElementById("total").innerText;
+texto += "Total: $" + total;
 
-let url="https://wa.me/5215610791509?text="+encodeURIComponent(texto);
+let url = "https://wa.me/5215610791509?text=" + encodeURIComponent(texto);
 
 window.open(url);
 
