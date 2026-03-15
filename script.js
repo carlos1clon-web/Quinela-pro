@@ -1,140 +1,181 @@
-let precio = 10
-let total = 0
-let quinelas = []
+let quinelas = [];
+let precio = 10;
+
+function calcularTotal(){
+
+let totalGeneral = 0;
+
+document.querySelectorAll(".quiniela").forEach(tabla => {
+
+let partidos = {};
+
+tabla.querySelectorAll("input[type=checkbox]").forEach(c => {
+
+let partido = c.dataset.partido;
+
+if(!partidos[partido]){
+partidos[partido] = 0;
+}
+
+if(c.checked){
+partidos[partido]++;
+}
+
+});
+
+let combinaciones = 1;
+
+for(let p in partidos){
+
+let seleccionadas = partidos[p];
+
+if(seleccionadas === 0){
+seleccionadas = 1;
+}
+
+combinaciones *= seleccionadas;
+
+}
+
+totalGeneral += combinaciones * precio;
+
+});
+
+document.getElementById("total").innerText = "$" + totalGeneral;
+
+}
+
+document.addEventListener("change", function(e){
+if(e.target.type === "checkbox"){
+calcularTotal();
+}
+});
 
 function limpiar(){
 
-document.querySelectorAll("input[type=checkbox]").forEach(c=>{
-c.checked=false
-})
+document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
+
+calcularTotal();
 
 }
 
 function aleatorio(){
 
-limpiar()
+limpiar();
 
 for(let i=1;i<=9;i++){
 
-let opciones=document.querySelectorAll(`input[data-partido="${i}"]`)
+let opcion = Math.floor(Math.random()*3);
 
-let r=Math.floor(Math.random()*3)
+let checkboxes = document.querySelectorAll(`input[data-partido="${i}"]`);
 
-opciones[r].checked=true
+checkboxes[opcion].checked = true;
 
 }
+
+calcularTotal();
 
 }
 
 function agregar(){
 
-let nombre=document.getElementById("nombre").value.trim()
+let nombre = document.getElementById("nombre").value.trim();
 
-if(nombre===""){
-alert("Escribe tu nombre primero")
-return
+if(nombre === ""){
+alert("Debes escribir tu nombre");
+return;
 }
 
-let seleccion=[]
+let seleccion = [];
 
 for(let i=1;i<=9;i++){
 
-let checks=document.querySelectorAll(`input[data-partido="${i}"]`)
+let letra="-";
 
-let letra="-"
-
-checks.forEach((c,index)=>{
+document.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
 
 if(c.checked){
 
-if(index===0) letra="L"
-if(index===1) letra="E"
-if(index===2) letra="V"
+if(index===0) letra="L";
+if(index===1) letra="E";
+if(index===2) letra="V";
 
 }
 
-})
+});
 
-seleccion.push(letra)
+seleccion.push(letra);
 
 }
 
-if(seleccion.every(v=>v==="-" )){
-alert("Selecciona una quiniela")
-return
+if(seleccion.every(v=>v=="-")){
+alert("Debes llenar la quiniela");
+return;
 }
 
-quinelas.push(seleccion)
+quinelas.push(seleccion);
 
-total+=precio
+mostrarQuinielas();
 
-document.getElementById("total").innerText="$"+total
-
-mostrarQuinielas()
-
-limpiar()
+limpiar();
 
 }
 
 function mostrarQuinielas(){
 
-let contenedor=document.getElementById("listaQuinielas")
+let contenedor = document.getElementById("listaQuinielas");
 
-contenedor.innerHTML=""
+contenedor.innerHTML="";
 
 quinelas.forEach((q,i)=>{
 
-let div=document.createElement("div")
+let div=document.createElement("div");
 
-div.className="quinielaGuardada"
+div.className="quinielaGuardada";
 
 div.innerHTML=`
-<span>${q.join(" ")}</span>
-<button onclick="eliminarQuiniela(${i})">❌</button>
-`
+${q.join(" ")} 
+<button onclick="eliminar(${i})">❌</button>
+`;
 
-contenedor.appendChild(div)
+contenedor.appendChild(div);
 
-})
+});
 
 }
 
-function eliminarQuiniela(i){
+function eliminar(i){
 
-quinelas.splice(i,1)
+quinelas.splice(i,1);
 
-total-=precio
-
-document.getElementById("total").innerText="$"+total
-
-mostrarQuinielas()
+mostrarQuinielas();
 
 }
 
 function enviar(){
 
-let nombre=document.getElementById("nombre").value
+let nombre = document.getElementById("nombre").value;
 
-let texto="QUINIELAS MÉXICO\n\n"
+let texto="QUINIELAS\n\n";
 
-texto+="Participante: "+nombre+"\n\n"
+texto+="Participante: "+nombre+"\n\n";
 
 quinelas.forEach((q,i)=>{
 
-texto+="Quiniela "+(i+1)+"\n"
+texto+="Quiniela "+(i+1)+"\n";
 
 q.forEach((p,j)=>{
-texto+="Partido "+(j+1)+" : "+p+"\n"
-})
+texto+="Partido "+(j+1)+": "+p+"\n";
+});
 
-texto+="\n"
+texto+="\n";
 
-})
+});
 
-texto+="Total: $"+total
+texto+="Total: "+document.getElementById("total").innerText;
 
-let url="https://wa.me/5215610791509?text="+encodeURIComponent(texto)
+let url="https://wa.me/5215610791509?text="+encodeURIComponent(texto);
 
-window.open(url)
+window.open(url);
 
 }
