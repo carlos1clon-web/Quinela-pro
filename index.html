@@ -9,15 +9,37 @@
 
 <link rel="stylesheet" href="style.css">
 
+<style>
+
+.botones{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.botones button{
+flex:1;
+padding:12px;
+font-size:16px;
+}
+
+.enviar{
+width:100%;
+margin-top:10px;
+padding:15px;
+font-size:18px;
+background:#25D366;
+color:white;
+border:none;
+}
+
+</style>
+
 </head>
 
 <body>
 
 <h1>QUINIELAS LIGA MX</h1>
-
-<button onclick="agregarQuiniela()">➕ Agregar Quiniela</button>
-
-<br><br>
 
 <div id="contenedorQuinielas">
 
@@ -126,11 +148,17 @@ Unirse al grupo de Facebook Quinielas Liga MX
 
 <input type="text" id="nombre" placeholder="Nombre del participante">
 
-<br><br>
+<div class="botones">
 
 <button onclick="limpiar()">Limpiar</button>
+
+<button onclick="agregarQuiniela()">Agregar</button>
+
 <button onclick="aleatorio()">Aleatorio</button>
-<button onclick="enviar()">Enviar por WhatsApp</button>
+
+</div>
+
+<button class="enviar" onclick="enviar()">Enviar por WhatsApp</button>
 
 <script>
 
