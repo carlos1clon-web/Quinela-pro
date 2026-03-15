@@ -33,6 +33,20 @@ color:white;
 border:none;
 }
 
+#listaQuinielas{
+margin-top:15px;
+}
+
+.quinielaGuardada{
+background:#dff0d8;
+padding:10px;
+margin-top:5px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+}
+
 </style>
 
 </head>
@@ -160,149 +174,10 @@ Unirse al grupo de Facebook Quinielas Liga MX
 
 <button class="enviar" onclick="enviar()">Enviar por WhatsApp</button>
 
-<script>
+<!-- AQUÍ SE GUARDAN LAS QUINIELAS -->
+<div id="listaQuinielas"></div>
 
-function calcularTotal(){
-
-let totalGeneral = 0;
-let precio = 10;
-
-document.querySelectorAll(".quiniela").forEach(tabla => {
-
-let partidos = {};
-
-tabla.querySelectorAll("input[type=checkbox]").forEach(c => {
-
-let partido = c.dataset.partido;
-
-if(!partidos[partido]){
-partidos[partido] = 0;
-}
-
-if(c.checked){
-partidos[partido]++;
-}
-
-});
-
-let combinaciones = 1;
-
-for(let p in partidos){
-
-let seleccionadas = partidos[p];
-
-if(seleccionadas === 0){
-seleccionadas = 1;
-}
-
-combinaciones *= seleccionadas;
-
-}
-
-totalGeneral += combinaciones * precio;
-
-});
-
-document.getElementById("total").innerText = "$" + totalGeneral;
-
-}
-
-document.addEventListener("change", function(e){
-if(e.target.type === "checkbox"){
-calcularTotal();
-}
-});
-
-function limpiar(){
-
-document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
-
-calcularTotal();
-
-}
-
-function aleatorio(){
-
-document.querySelectorAll(".quiniela").forEach(tabla => {
-
-tabla.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
-
-for(let i=1;i<=9;i++){
-
-let opcion = Math.floor(Math.random()*3);
-
-let checkboxes = tabla.querySelectorAll(`input[data-partido="${i}"]`);
-
-checkboxes[opcion].checked = true;
-
-}
-
-});
-
-calcularTotal();
-
-}
-
-function agregarQuiniela(){
-
-let contenedor = document.getElementById("contenedorQuinielas");
-
-let nueva = document.querySelector(".quiniela").cloneNode(true);
-
-nueva.querySelectorAll("input[type=checkbox]").forEach(c => {
-c.checked = false;
-});
-
-contenedor.appendChild(document.createElement("br"));
-contenedor.appendChild(nueva);
-
-}
-
-function enviar(){
-
-let nombre = document.getElementById("nombre").value;
-
-let texto = "Quiniela de " + nombre + "%0A%0A";
-
-let numero = 1;
-
-document.querySelectorAll(".quiniela").forEach(tabla => {
-
-texto += "Quiniela " + numero + "%0A";
-
-for(let i=1;i<=9;i++){
-
-let seleccion = [];
-
-tabla.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
-
-if(c.checked){
-
-if(index===0) seleccion.push("L");
-if(index===1) seleccion.push("E");
-if(index===2) seleccion.push("V");
-
-}
-
-});
-
-texto += "Partido " + i + ": " + seleccion.join(",") + "%0A";
-
-}
-
-texto += "%0A";
-
-numero++;
-
-});
-
-texto += "Total: " + document.getElementById("total").innerText;
-
-window.open("https://wa.me/5215610791509?text=" + texto);
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
