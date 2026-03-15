@@ -15,7 +15,13 @@
 
 <h1>QUINIELAS LIGA MX</h1>
 
-<table border="1">
+<button onclick="agregarQuiniela()">➕ Agregar Quiniela</button>
+
+<br><br>
+
+<div id="contenedorQuinielas">
+
+<table border="1" class="quiniela">
 
 <tr>
 <th>Local</th>
@@ -99,6 +105,8 @@
 
 </table>
 
+</div>
+
 <div class="info">
 
 <p>💰 Precio por combinación: $10</p>
@@ -128,10 +136,14 @@ Unirse al grupo de Facebook Quinielas Liga MX
 
 function calcularTotal(){
 
-let partidos = {};
-let checkboxes = document.querySelectorAll("input[type=checkbox]");
+let totalGeneral = 0;
+let precio = 10;
 
-checkboxes.forEach(c => {
+document.querySelectorAll(".quiniela").forEach(tabla => {
+
+let partidos = {};
+
+tabla.querySelectorAll("input[type=checkbox]").forEach(c => {
 
 let partido = c.dataset.partido;
 
@@ -159,37 +171,62 @@ combinaciones *= seleccionadas;
 
 }
 
-let precio = 10;
-let total = combinaciones * precio;
+totalGeneral += combinaciones * precio;
 
-document.getElementById("total").innerText = "$" + total;
+});
+
+document.getElementById("total").innerText = "$" + totalGeneral;
 
 }
 
-document.querySelectorAll("input[type=checkbox]").forEach(c => {
-c.addEventListener("change", calcularTotal);
+document.addEventListener("change", function(e){
+if(e.target.type === "checkbox"){
+calcularTotal();
+}
 });
 
 function limpiar(){
+
 document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
+
 calcularTotal();
+
 }
 
 function aleatorio(){
 
-document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
+document.querySelectorAll(".quiniela").forEach(tabla => {
+
+tabla.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
 
 for(let i=1;i<=9;i++){
 
 let opcion = Math.floor(Math.random()*3);
 
-let checkboxes = document.querySelectorAll(`input[data-partido="${i}"]`);
+let checkboxes = tabla.querySelectorAll(`input[data-partido="${i}"]`);
 
 checkboxes[opcion].checked = true;
 
 }
 
+});
+
 calcularTotal();
+
+}
+
+function agregarQuiniela(){
+
+let contenedor = document.getElementById("contenedorQuinielas");
+
+let nueva = document.querySelector(".quiniela").cloneNode(true);
+
+nueva.querySelectorAll("input[type=checkbox]").forEach(c => {
+c.checked = false;
+});
+
+contenedor.appendChild(document.createElement("br"));
+contenedor.appendChild(nueva);
 
 }
 
@@ -197,27 +234,43 @@ function enviar(){
 
 let nombre = document.getElementById("nombre").value;
 
-let texto = "Quiniela de " + nombre + "%0A";
+let texto = "Quiniela de " + nombre + "%0A%0A";
+
+let numero = 1;
+
+document.querySelectorAll(".quiniela").forEach(tabla => {
+
+texto += "Quiniela " + numero + "%0A";
 
 for(let i=1;i<=9;i++){
 
 let seleccion = [];
 
-document.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
+tabla.querySelectorAll(`input[data-partido="${i}"]`).forEach((c,index)=>{
+
 if(c.checked){
+
 if(index===0) seleccion.push("L");
 if(index===1) seleccion.push("E");
 if(index===2) seleccion.push("V");
+
 }
+
 });
 
 texto += "Partido " + i + ": " + seleccion.join(",") + "%0A";
 
 }
 
+texto += "%0A";
+
+numero++;
+
+});
+
 texto += "Total: " + document.getElementById("total").innerText;
 
-window.open("https://wa.me/?text=" + texto);
+window.open("https://wa.me/5215610791509?text=" + texto);
 
 }
 
