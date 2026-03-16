@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiniela Liga MX</title>
+
 <style>
 
 body{
@@ -82,19 +83,41 @@ margin-bottom:10px;
 
 </style>
 </head>
+
 <body>
+
 <h1>⚽ Quiniela Liga MX</h1>
+
 <div class="container">
+
 <div class="info">
 💰 Precio por quiniela: $20<br>
 📅 Cierre: Viernes antes del primer partido<br>
 📞 Informes: 5551234567
 </div>
+
 <form id="quinielaForm">
+
 <input type="text" id="nombre" placeholder="Tu nombre" required>
+
 <div id="partidos"></div>
+
+<button type="button" onclick="aleatorio()">🎲 Aleatorio</button>
+
+<button type="button" onclick="limpiar()">🧹 Limpiar</button>
+
+<button type="submit">📨 Enviar Quiniela</button>
+
 </form>
+
+<div class="facebook">
+<a href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">
+Ir al grupo de Facebook
+</a>
 </div>
+
+</div>
+
 <script>
 
 const partidosDiv=document.getElementById("partidos");
@@ -130,9 +153,7 @@ partidosDiv.innerHTML+=`
 }
 
 function limpiar(){
-
 document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
-
 }
 
 function aleatorio(){
@@ -142,7 +163,6 @@ limpiar();
 for(let i=1;i<=9;i++){
 
 let opciones=["L","E","V"];
-
 let r=Math.floor(Math.random()*3);
 
 document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
@@ -166,9 +186,7 @@ for(let i=1;i<=9;i++){
 let valores=[];
 
 document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
-
 valores.push(c.value);
-
 });
 
 formData.append("p"+i,valores.join("-"));
@@ -190,6 +208,6 @@ alert("Error al enviar la quiniela");
 });
 
 </script>
+
 </body>
 </html>
-:::
