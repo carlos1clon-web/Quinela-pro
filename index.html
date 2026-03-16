@@ -163,37 +163,44 @@ Partido 9
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbyi6aFWOTGxwt8y3lhjCa41ZdRQQmwD8OXxGS420uBBlRdk37Y2okA1nKnE5Z3noAM3/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyi6aFWOTGxwt8y3lhjCa41ZdRQQmwD8OXxGS420uBBlRdk37Y2okA1nKnE5Z3noAM3/exec";
 
-document.getElementById("quinielaForm").addEventListener("submit",function(e){
+document.getElementById("quinielaForm").addEventListener("submit", function(e){
 
 e.preventDefault();
 
-let data={
+let formData = new FormData();
 
-nombre:document.getElementById("nombre").value,
-p1:document.getElementById("p1").value,
-p2:document.getElementById("p2").value,
-p3:document.getElementById("p3").value,
-p4:document.getElementById("p4").value,
-p5:document.getElementById("p5").value,
-p6:document.getElementById("p6").value,
-p7:document.getElementById("p7").value,
-p8:document.getElementById("p8").value,
-p9:document.getElementById("p9").value
-
-};
+formData.append("nombre", document.getElementById("nombre").value);
+formData.append("p1", document.getElementById("p1").value);
+formData.append("p2", document.getElementById("p2").value);
+formData.append("p3", document.getElementById("p3").value);
+formData.append("p4", document.getElementById("p4").value);
+formData.append("p5", document.getElementById("p5").value);
+formData.append("p6", document.getElementById("p6").value);
+formData.append("p7", document.getElementById("p7").value);
+formData.append("p8", document.getElementById("p8").value);
+formData.append("p9", document.getElementById("p9").value);
 
 fetch(scriptURL,{
 method:"POST",
-body:JSON.stringify(data)
+body:formData
 })
-.then(res=>alert("Quiniela enviada correctamente ⚽"))
-.catch(err=>alert("Error al enviar"));
+.then(response => {
+
+alert("Quiniela enviada correctamente ⚽");
+
+document.getElementById("quinielaForm").reset();
+
+})
+.catch(error => {
+
+alert("Error al enviar la quiniela");
+
+});
 
 });
 
 </script>
 
 </body>
-</html>
