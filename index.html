@@ -21,12 +21,31 @@
 body{
 font-family:Arial;
 text-align:center;
+margin:0;
 }
+
+/* barra teléfono /
+
+.telefono{
+background:#25D366;
+color:white;
+padding:12px;
+font-size:18px;
+font-weight:bold;
+}
+
+.telefono a{
+color:white;
+text-decoration:none;
+}
+
+/ botones /
 
 .botones{
 display:flex;
 gap:10px;
 margin-top:10px;
+padding:10px;
 }
 
 .botones button{
@@ -37,7 +56,7 @@ cursor:pointer;
 }
 
 .enviar{
-width:100%;
+width:95%;
 margin-top:10px;
 padding:15px;
 font-size:18px;
@@ -47,8 +66,11 @@ border:none;
 cursor:pointer;
 }
 
+/ quinielas guardadas /
+
 #listaQuinielas{
 margin-top:15px;
+padding:10px;
 }
 
 .quinielaGuardada{
@@ -61,19 +83,15 @@ align-items:center;
 font-weight:bold;
 }
 
-.info{
-margin-top:20px;
+/ tabla */
+
+table{
+margin:auto;
+border-collapse:collapse;
 }
 
-.botonWhatsapp{
-display:inline-block;
-margin-top:10px;
-padding:10px 20px;
-background:#25D366;
-color:white;
-text-decoration:none;
-border-radius:5px;
-font-weight:bold;
+th,td{
+padding:8px;
 }
 
 </style>
@@ -81,6 +99,12 @@ font-weight:bold;
 </head>
 
 <body>
+
+<!-- TELEFONO INFORMES -->
+
+<div class="telefono">
+📞 Informes: <a href="https://wa.me/525572246040" target="_blank">55 7224 6040</a>
+</div>
 
 <h1>⚽ QUINIELAS LIGA MX</h1>
 
@@ -172,7 +196,7 @@ font-weight:bold;
 
 </div>
 
-<div class="info">
+<br>
 
 <p>💰 Precio por combinación: $10</p>
 <p>⏰ Cierre: Sábado 11:50 PM</p>
@@ -183,14 +207,6 @@ Unirse al grupo de Facebook Quinielas Liga MX
 </a>
 </p>
 
-<p>📞 Informes:</p>
-
-<a class="botonWhatsapp" href="https://wa.me/525572246040" target="_blank">
-WhatsApp 55 7224 6040
-</a>
-
-</div>
-
 <h2>Total a pagar: <span id="total">$0</span></h2>
 
 <br>
@@ -200,7 +216,9 @@ WhatsApp 55 7224 6040
 <div class="botones">
 
 <button onclick="limpiar()">Limpiar</button>
+
 <button onclick="agregarQuiniela()">Agregar</button>
+
 <button onclick="aleatorio()">Aleatorio</button>
 
 </div>
