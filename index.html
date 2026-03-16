@@ -1,243 +1,233 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quinielas Liga MX</title>
-
-<!-- META PARA COMPARTIR EN WHATSAPP Y FACEBOOK -->
-<meta property="og:title" content="Quinielas Liga MX">
-<meta property="og:description" content="Participa en la quiniela semanal y registra tus pronósticos antes del cierre.">
-<meta property="og:image" content="https://carlos1clon-web.github.io/Quinela-pro/Logo-quinielas.png">
-<meta property="og:url" content="https://carlos1clon-web.github.io/Quinela-pro/">
-<meta property="og:type" content="website">
-
-<link rel="stylesheet" href="style.css">
 
 <style>
 
 body{
 font-family:Arial;
+background:#0f172a;
+color:white;
 text-align:center;
-margin:0;
-background:#f4f4f4;
+padding:20px;
 }
-
-/* BARRA TELEFONO /
-
-.telefono{
-background:#25D366;
-color:white;
-padding:12px;
-font-size:18px;
-font-weight:bold;
-}
-
-.telefono a{
-color:white;
-text-decoration:none;
-}
-
-/ LOGO /
 
 .logo{
-width:180px;
-margin-top:15px;
+width:120px;
+margin-bottom:10px;
 }
 
-/ TABLA /
-
-table{
+.container{
+max-width:600px;
 margin:auto;
-border-collapse:collapse;
-background:white;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
 }
 
-th,td{
-padding:8px;
+.info{
+background:#334155;
+padding:10px;
+border-radius:6px;
+margin-bottom:10px;
 }
 
-/ BOTONES /
+.partido{
+background:#334155;
+margin:8px 0;
+padding:10px;
+border-radius:6px;
+}
 
-.botones{
+.opciones{
 display:flex;
-gap:10px;
-margin:15px;
+justify-content:space-around;
 }
 
-.botones button{
-flex:1;
-padding:12px;
-font-size:16px;
-cursor:pointer;
-}
-
-/ BOTON WHATSAPP /
-
-.enviar{
-width:95%;
+button{
 margin-top:10px;
-padding:15px;
-font-size:18px;
-background:#25D366;
-color:white;
+padding:12px;
+width:100%;
+background:#22c55e;
 border:none;
-cursor:pointer;
+color:white;
+font-size:16px;
+border-radius:6px;
 }
 
-/ QUINIELAS GUARDADAS */
-
-#listaQuinielas{
+.resultados{
 margin-top:20px;
+background:#020617;
 padding:10px;
-}
-
-.quinielaGuardada{
-background:#dff0d8;
-padding:10px;
-margin-top:5px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-weight:bold;
+border-radius:6px;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div class="telefono">
-📞 Informes: <a href="https://wa.me/525572246040" target="_blank">55 7224 6040</a>
+<img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Liga_MX_logo.svg">
+
+<h1>Quinielas Liga MX</h1>
+
+<div class="container">
+
+<div class="info">
+💰 Costo por quiniela: $20<br>
+⏰ Cierre: Viernes 7:00 PM<br>
+📞 Informes: 5551234567
 </div>
 
-<img src="Logo-quinielas.png" class="logo">
+<input type="text" id="nombre" placeholder="Tu nombre">
 
-<h1>⚽ QUINIELAS LIGA MX</h1>
+<div id="partidos"></div>
 
-<div id="contenedorQuinielas">
+<div class="info">
+Dobles: <span id="dobles">0</span><br>
+Triples: <span id="triples">0</span><br>
+Total a pagar: $<span id="total">20</span>
+</div>
 
-<table border="1">
+<button onclick="aleatorio()">🎲 Aleatorio</button>
+<button onclick="limpiar()">🧹 Limpiar</button>
+<button onclick="agregar()">➕ Agregar Quiniela</button>
+<button onclick="enviar()">📲 Enviar por WhatsApp</button>
 
-<tr>
-<th>Local</th>
-<th>L</th>
-<th>E</th>
-<th>V</th>
-<th>Visitante</th>
-</tr>
-
-<tr>
-<td>Fluminense</td>
-<td><input type="checkbox" data-partido="1"></td>
-<td><input type="checkbox" data-partido="1"></td>
-<td><input type="checkbox" data-partido="1"></td>
-<td>Paranaense</td>
-</tr>
-
-<tr>
-<td>Santos</td>
-<td><input type="checkbox" data-partido="2"></td>
-<td><input type="checkbox" data-partido="2"></td>
-<td><input type="checkbox" data-partido="2"></td>
-<td>Corinthians</td>
-</tr>
-
-<tr>
-<td>Internacional</td>
-<td><input type="checkbox" data-partido="3"></td>
-<td><input type="checkbox" data-partido="3"></td>
-<td><input type="checkbox" data-partido="3"></td>
-<td>Bahia</td>
-</tr>
-
-<tr>
-<td>Equipo 4</td>
-<td><input type="checkbox" data-partido="4"></td>
-<td><input type="checkbox" data-partido="4"></td>
-<td><input type="checkbox" data-partido="4"></td>
-<td>Equipo 4B</td>
-</tr>
-
-<tr>
-<td>Equipo 5</td>
-<td><input type="checkbox" data-partido="5"></td>
-<td><input type="checkbox" data-partido="5"></td>
-<td><input type="checkbox" data-partido="5"></td>
-<td>Equipo 5B</td>
-</tr>
-
-<tr>
-<td>Equipo 6</td>
-<td><input type="checkbox" data-partido="6"></td>
-<td><input type="checkbox" data-partido="6"></td>
-<td><input type="checkbox" data-partido="6"></td>
-<td>Equipo 6B</td>
-</tr>
-
-<tr>
-<td>Equipo 7</td>
-<td><input type="checkbox" data-partido="7"></td>
-<td><input type="checkbox" data-partido="7"></td>
-<td><input type="checkbox" data-partido="7"></td>
-<td>Equipo 7B</td>
-</tr>
-
-<tr>
-<td>Equipo 8</td>
-<td><input type="checkbox" data-partido="8"></td>
-<td><input type="checkbox" data-partido="8"></td>
-<td><input type="checkbox" data-partido="8"></td>
-<td>Equipo 8B</td>
-</tr>
-
-<tr>
-<td>Equipo 9</td>
-<td><input type="checkbox" data-partido="9"></td>
-<td><input type="checkbox" data-partido="9"></td>
-<td><input type="checkbox" data-partido="9"></td>
-<td>Equipo 9B</td>
-</tr>
-
-</table>
+<div class="resultados">
+<h3>Quinielas agregadas</h3>
+<div id="lista"></div>
+</div>
 
 </div>
 
-<br>
+<script>
 
-<p>💰 Precio por combinación: $10</p>
-<p>⏰ Cierre: Sábado 11:50 PM</p>
+const partidosDiv=document.getElementById("partidos");
 
-<p>
-<a href="https://www.facebook.com/share/g/1L6xUZ3U5K/?mibextid=wwXIfr" target="_blank">
-Unirse al grupo de Facebook Quinielas Liga MX
-</a>
-</p>
+for(let i=1;i<=9;i++){
 
-<h2>Total a pagar: <span id="total">$0</span></h2>
+partidosDiv.innerHTML+=`
 
-<br>
+<div class="partido">
 
-<input type="text" id="nombre" placeholder="Nombre del participante">
+<strong>Partido ${i}</strong>
 
-<div class="botones">
+<div class="opciones">
 
-<button onclick="limpiar()">Limpiar</button>
+<label><input type="checkbox" name="p${i}" onchange="calcular()"> L</label>
 
-<button onclick="agregarQuiniela()">Agregar</button>
+<label><input type="checkbox" name="p${i}" onchange="calcular()"> E</label>
 
-<button onclick="aleatorio()">Aleatorio</button>
+<label><input type="checkbox" name="p${i}" onchange="calcular()"> V</label>
 
 </div>
 
-<button class="enviar" onclick="enviar()">Enviar por WhatsApp</button>
+</div>
 
-<div id="listaQuinielas"></div>
+`;
 
-<script src="script.js"></script>
+}
+
+function calcular(){
+
+let dobles=0;
+let triples=0;
+
+for(let i=1;i<=9;i++){
+
+let seleccion=document.querySelectorAll(`input[name=p${i}]:checked`).length;
+
+if(seleccion==2)dobles++;
+
+if(seleccion==3)triples++;
+
+}
+
+let total=20 + (dobles*5) + (triples*10);
+
+document.getElementById("dobles").innerText=dobles;
+document.getElementById("triples").innerText=triples;
+document.getElementById("total").innerText=total;
+
+}
+
+function limpiar(){
+
+document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+
+calcular();
+
+}
+
+function aleatorio(){
+
+limpiar();
+
+for(let i=1;i<=9;i++){
+
+let r=Math.floor(Math.random()*3);
+
+document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
+
+}
+
+calcular();
+
+}
+
+let quinielas=[];
+
+function agregar(){
+
+let jugada=[];
+
+for(let i=1;i<=9;i++){
+
+let picks=[];
+
+document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
+picks.push(c.value);
+});
+
+jugada.push(picks.join(""));
+
+}
+
+quinielas.push(jugada);
+
+document.getElementById("lista").innerHTML+=`
+<div>Quiniela ${quinielas.length}: ${jugada.join(" | ")}</div>
+`;
+
+limpiar();
+
+}
+
+function enviar(){
+
+let nombre=document.getElementById("nombre").value;
+
+let mensaje="Quiniela Liga MX%0A";
+
+quinielas.forEach((q,i)=>{
+
+mensaje+="Quiniela "+(i+1)+": "+q.join(" | ")+"%0A";
+
+});
+
+let telefono="5215551234567";
+
+let url="https://wa.me/"+telefono+"?text="+mensaje;
+
+window.open(url,"_blank");
+
+}
+
+</script>
 
 </body>
 </html>
