@@ -3,105 +3,61 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Quinielas Liga MX</title>
-
-<!-- META PARA COMPARTIR EN WHATSAPP Y FACEBOOK -->
-<meta property="og:title" content="Quinielas Liga MX">
-<meta property="og:description" content="Participa en la quiniela semanal y registra tus pronósticos antes del cierre.">
-<meta property="og:image" content="https://carlos1clon-web.github.io/Quinela-pro/Logo-quinielas.png">
-<meta property="og:url" content="https://carlos1clon-web.github.io/Quinela-pro/">
-<meta property="og:type" content="website">
-
-<link rel="stylesheet" href="style.css">
+<title>Quiniela Liga MX</title>
 
 <style>
 
 body{
-font-family:Arial;
+font-family: Arial;
+background:#0f172a;
+color:white;
 text-align:center;
-margin:0;
-background:#f4f4f4;
+padding:20px;
 }
 
-/* BARRA TELEFONO /
-
-.telefono{
-background:#25D366;
-color:white;
-padding:12px;
-font-size:18px;
-font-weight:bold;
+h1{
+color:#22c55e;
 }
 
-.telefono a{
-color:white;
-text-decoration:none;
-}
-
-/ LOGO /
-
-.logo{
-width:180px;
-margin-top:15px;
-}
-
-/ TABLA /
-
-table{
+.container{
+max-width:500px;
 margin:auto;
-border-collapse:collapse;
-background:white;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
 }
 
-th,td{
-padding:8px;
-}
-
-/ BOTONES /
-
-.botones{
-display:flex;
-gap:10px;
-margin:15px;
-}
-
-.botones button{
-flex:1;
-padding:12px;
-font-size:16px;
-cursor:pointer;
-}
-
-/ BOTON WHATSAPP /
-
-.enviar{
-width:95%;
-margin-top:10px;
-padding:15px;
-font-size:18px;
-background:#25D366;
-color:white;
-border:none;
-cursor:pointer;
-}
-
-/ QUINIELAS GUARDADAS */
-
-#listaQuinielas{
-margin-top:20px;
+.partido{
+margin:10px 0;
 padding:10px;
+background:#334155;
+border-radius:6px;
 }
 
-.quinielaGuardada{
-background:#dff0d8;
+select,input{
+width:100%;
 padding:10px;
 margin-top:5px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-weight:bold;
+border-radius:5px;
+border:none;
+}
+
+button{
+margin-top:20px;
+padding:12px;
+width:100%;
+background:#22c55e;
+color:white;
+border:none;
+font-size:18px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
 }
 
 </style>
@@ -110,134 +66,134 @@ font-weight:bold;
 
 <body>
 
-<div class="telefono">
-📞 Informes: <a href="https://wa.me/525572246040" target="_blank">55 7224 6040</a>
+<h1>⚽ Quiniela Liga MX</h1>
+
+<div class="container">
+
+<form id="quinielaForm">
+
+<input type="text" id="nombre" placeholder="Tu nombre" required>
+
+<div class="partido">
+Partido 1
+<select id="p1">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
 </div>
 
-<img src="Logo-quinielas.png" class="logo">
-
-<h1>⚽ QUINIELAS LIGA MX</h1>
-
-<div id="contenedorQuinielas">
-
-<table border="1">
-
-<tr>
-<th>Local</th>
-<th>L</th>
-<th>E</th>
-<th>V</th>
-<th>Visitante</th>
-</tr>
-
-<tr>
-<td>Fluminense</td>
-<td><input type="checkbox" data-partido="1"></td>
-<td><input type="checkbox" data-partido="1"></td>
-<td><input type="checkbox" data-partido="1"></td>
-<td>Paranaense</td>
-</tr>
-
-<tr>
-<td>Santos</td>
-<td><input type="checkbox" data-partido="2"></td>
-<td><input type="checkbox" data-partido="2"></td>
-<td><input type="checkbox" data-partido="2"></td>
-<td>Corinthians</td>
-</tr>
-
-<tr>
-<td>Internacional</td>
-<td><input type="checkbox" data-partido="3"></td>
-<td><input type="checkbox" data-partido="3"></td>
-<td><input type="checkbox" data-partido="3"></td>
-<td>Bahia</td>
-</tr>
-
-<tr>
-<td>Equipo 4</td>
-<td><input type="checkbox" data-partido="4"></td>
-<td><input type="checkbox" data-partido="4"></td>
-<td><input type="checkbox" data-partido="4"></td>
-<td>Equipo 4B</td>
-</tr>
-
-<tr>
-<td>Equipo 5</td>
-<td><input type="checkbox" data-partido="5"></td>
-<td><input type="checkbox" data-partido="5"></td>
-<td><input type="checkbox" data-partido="5"></td>
-<td>Equipo 5B</td>
-</tr>
-
-<tr>
-<td>Equipo 6</td>
-<td><input type="checkbox" data-partido="6"></td>
-<td><input type="checkbox" data-partido="6"></td>
-<td><input type="checkbox" data-partido="6"></td>
-<td>Equipo 6B</td>
-</tr>
-
-<tr>
-<td>Equipo 7</td>
-<td><input type="checkbox" data-partido="7"></td>
-<td><input type="checkbox" data-partido="7"></td>
-<td><input type="checkbox" data-partido="7"></td>
-<td>Equipo 7B</td>
-</tr>
-
-<tr>
-<td>Equipo 8</td>
-<td><input type="checkbox" data-partido="8"></td>
-<td><input type="checkbox" data-partido="8"></td>
-<td><input type="checkbox" data-partido="8"></td>
-<td>Equipo 8B</td>
-</tr>
-
-<tr>
-<td>Equipo 9</td>
-<td><input type="checkbox" data-partido="9"></td>
-<td><input type="checkbox" data-partido="9"></td>
-<td><input type="checkbox" data-partido="9"></td>
-<td>Equipo 9B</td>
-</tr>
-
-</table>
-
+<div class="partido">
+Partido 2
+<select id="p2">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
 </div>
 
-<br>
+<div class="partido">
+Partido 3
+<select id="p3">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<p>💰 Precio por combinación: $10</p>
-<p>⏰ Cierre: Sábado 11:50 PM</p>
+<div class="partido">
+Partido 4
+<select id="p4">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<p>
-<a href="https://www.facebook.com/share/g/1L6xUZ3U5K/?mibextid=wwXIfr" target="_blank">
-Unirse al grupo de Facebook Quinielas Liga MX
-</a>
-</p>
+<div class="partido">
+Partido 5
+<select id="p5">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<h2>Total a pagar: <span id="total">$0</span></h2>
+<div class="partido">
+Partido 6
+<select id="p6">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<br>
+<div class="partido">
+Partido 7
+<select id="p7">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<input type="text" id="nombre" placeholder="Nombre del participante">
+<div class="partido">
+Partido 8
+<select id="p8">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<div class="botones">
+<div class="partido">
+Partido 9
+<select id="p9">
+<option value="L">Local</option>
+<option value="E">Empate</option>
+<option value="V">Visitante</option>
+</select>
+</div>
 
-<button onclick="limpiar()">Limpiar</button>
+<button type="submit">Enviar Quiniela</button>
 
-<button onclick="agregarQuiniela()">Agregar</button>
-
-<button onclick="aleatorio()">Aleatorio</button>
+</form>
 
 </div>
 
-<button class="enviar" onclick="enviar()">Enviar por WhatsApp</button>
+<script>
 
-<div id="listaQuinielas"></div>
+const scriptURL="https://script.google.com/macros/s/AKfycbyi6aFWOTGxwt8y3lhjCa41ZdRQQmwD8OXxGS420uBBlRdk37Y2okA1nKnE5Z3noAM3/exec";
 
-<script src="script.js"></script>
+document.getElementById("quinielaForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let data={
+
+nombre:document.getElementById("nombre").value,
+p1:document.getElementById("p1").value,
+p2:document.getElementById("p2").value,
+p3:document.getElementById("p3").value,
+p4:document.getElementById("p4").value,
+p5:document.getElementById("p5").value,
+p6:document.getElementById("p6").value,
+p7:document.getElementById("p7").value,
+p8:document.getElementById("p8").value,
+p9:document.getElementById("p9").value
+
+};
+
+fetch(scriptURL,{
+method:"POST",
+body:JSON.stringify(data)
+})
+.then(res=>alert("Quiniela enviada correctamente ⚽"))
+.catch(err=>alert("Error al enviar"));
+
+});
+
+</script>
 
 </body>
 </html>
