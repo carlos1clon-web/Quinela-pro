@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Quiniela Liga MX</title>
-
 <style>
 
 body{
@@ -43,12 +40,10 @@ background:#334155;
 border-radius:6px;
 }
 
-select,input{
-width:100%;
-padding:10px;
+.opciones{
+display:flex;
+justify-content:space-around;
 margin-top:5px;
-border-radius:5px;
-border:none;
 }
 
 button{
@@ -77,114 +72,84 @@ text-decoration:none;
 font-weight:bold;
 }
 
+input[type=text]{
+width:100%;
+padding:10px;
+border-radius:5px;
+border:none;
+margin-bottom:10px;
+}
+
 </style>
-
 </head>
-
 <body>
-
 <h1>⚽ Quiniela Liga MX</h1>
-
 <div class="container">
-
 <div class="info">
 💰 Precio por quiniela: $20<br>
-📅 Cierre: Viernes antes del primer partido
+📅 Cierre: Viernes antes del primer partido<br>
+📞 Informes: 5551234567
 </div>
-
 <form id="quinielaForm">
-
 <input type="text" id="nombre" placeholder="Tu nombre" required>
-
-<div class="partido">Partido 1
-<select id="p1">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 2
-<select id="p2">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 3
-<select id="p3">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 4
-<select id="p4">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 5
-<select id="p5">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 6
-<select id="p6">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 7
-<select id="p7">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 8
-<select id="p8">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">Partido 9
-<select id="p9">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<button type="button" onclick="aleatorio()">🎲 Aleatorio</button>
-
-<button type="button" onclick="limpiar()">🧹 Limpiar</button>
-
-<button type="submit">📨 Enviar Quiniela</button>
-
+<div id="partidos"></div>
 </form>
-
-<div class="facebook">
-<a href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">
-Ir al grupo de Facebook
-</a>
 </div>
-
-</div>
-
 <script>
+
+const partidosDiv=document.getElementById("partidos");
+
+for(let i=1;i<=9;i++){
+
+partidosDiv.innerHTML+=`
+
+<div class="partido">
+
+<strong>Partido ${i}</strong>
+
+<div class="opciones">
+
+<label>
+<input type="checkbox" name="p${i}" value="L"> L
+</label>
+
+<label>
+<input type="checkbox" name="p${i}" value="E"> E
+</label>
+
+<label>
+<input type="checkbox" name="p${i}" value="V"> V
+</label>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function limpiar(){
+
+document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+
+}
+
+function aleatorio(){
+
+limpiar();
+
+for(let i=1;i<=9;i++){
+
+let opciones=["L","E","V"];
+
+let r=Math.floor(Math.random()*3);
+
+document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
+
+}
+
+}
 
 const scriptURL="https://script.google.com/macros/s/AKfycbyi6aFWOTGxwt8y3lhjCa41ZdRQQmwD8OXxGS420uBBlRdk37Y2okA1nKnE5Z3noAM3/exec";
 
@@ -192,12 +157,22 @@ document.getElementById("quinielaForm").addEventListener("submit",function(e){
 
 e.preventDefault();
 
-let formData = new FormData();
+let formData=new FormData();
 
 formData.append("nombre",document.getElementById("nombre").value);
 
 for(let i=1;i<=9;i++){
-formData.append("p"+i,document.getElementById("p"+i).value);
+
+let valores=[];
+
+document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
+
+valores.push(c.value);
+
+});
+
+formData.append("p"+i,valores.join("-"));
+
 }
 
 fetch(scriptURL,{
@@ -209,34 +184,12 @@ alert("Quiniela enviada correctamente ⚽");
 document.getElementById("quinielaForm").reset();
 })
 .catch(()=>{
-alert("Error al enviar");
+alert("Error al enviar la quiniela");
 });
 
 });
-
-function limpiar(){
-
-for(let i=1;i<=9;i++){
-document.getElementById("p"+i).selectedIndex=0;
-}
-
-}
-
-function aleatorio(){
-
-let opciones=["L","E","V"];
-
-for(let i=1;i<=9;i++){
-
-let r=Math.floor(Math.random()*3);
-
-document.getElementById("p"+i).value=opciones[r];
-
-}
-
-}
 
 </script>
-
 </body>
 </html>
+:::
