@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,7 +9,8 @@
 <title>Quinielas Liga MX</title>
 
 <!-- META PARA COMPARTIR -->
-<meta property="og:title" content="Quinielas México - Registra tu Quiniela">
+
+<meta property="og:title" content="Quinielas Liga MX">
 <meta property="og:description" content="Participa en la quiniela semanal y registra tus pronósticos antes del cierre.">
 <meta property="og:image" content="https://carlos1clon-web.github.io/Quinela-pro/Logo-quinielas.png">
 <meta property="og:url" content="https://carlos1clon-web.github.io/Quinela-pro/">
@@ -22,9 +24,10 @@ body{
 font-family:Arial;
 text-align:center;
 margin:0;
+background:#f4f4f4;
 }
 
-/* barra teléfono /
+/* BARRA INFORMES /
 
 .telefono{
 background:#25D366;
@@ -39,13 +42,31 @@ color:white;
 text-decoration:none;
 }
 
-/ botones /
+/ LOGO /
+
+.logo{
+margin-top:15px;
+width:180px;
+}
+
+/ TABLA /
+
+table{
+margin:auto;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:8px;
+}
+
+/ BOTONES /
 
 .botones{
 display:flex;
 gap:10px;
-margin-top:10px;
-padding:10px;
+margin:15px;
 }
 
 .botones button{
@@ -54,6 +75,8 @@ padding:12px;
 font-size:16px;
 cursor:pointer;
 }
+
+/ BOTON WHATSAPP /
 
 .enviar{
 width:95%;
@@ -66,10 +89,10 @@ border:none;
 cursor:pointer;
 }
 
-/ quinielas guardadas /
+/ QUINIELAS GUARDADAS */
 
 #listaQuinielas{
-margin-top:15px;
+margin-top:20px;
 padding:10px;
 }
 
@@ -83,34 +106,23 @@ align-items:center;
 font-weight:bold;
 }
 
-/ tabla */
-
-table{
-margin:auto;
-border-collapse:collapse;
-}
-
-th,td{
-padding:8px;
-}
-
 </style>
 
 </head>
 
 <body>
 
-<!-- TELEFONO INFORMES -->
-
 <div class="telefono">
 📞 Informes: <a href="https://wa.me/525572246040" target="_blank">55 7224 6040</a>
 </div>
+
+<img src="Logo-quinielas.png" class="logo">
 
 <h1>⚽ QUINIELAS LIGA MX</h1>
 
 <div id="contenedorQuinielas">
 
-<table border="1" class="quiniela">
+<table border="1">
 
 <tr>
 <th>Local</th>
@@ -216,9 +228,7 @@ Unirse al grupo de Facebook Quinielas Liga MX
 <div class="botones">
 
 <button onclick="limpiar()">Limpiar</button>
-
 <button onclick="agregarQuiniela()">Agregar</button>
-
 <button onclick="aleatorio()">Aleatorio</button>
 
 </div>
