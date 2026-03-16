@@ -35,10 +35,11 @@ margin-bottom:15px;
 }
 
 .quiniela{
-margin-bottom:20px;
+margin-bottom:25px;
 padding:10px;
-background:#0f172a;
+background:#020617;
 border-radius:8px;
+border:2px solid #22c55e;
 }
 
 .partido{
@@ -68,6 +69,14 @@ cursor:pointer;
 
 button:hover{
 background:#16a34a;
+}
+
+.agregar{
+background:#3b82f6;
+}
+
+.agregar:hover{
+background:#2563eb;
 }
 
 .facebook{
@@ -105,9 +114,9 @@ margin-bottom:10px;
 
 <input type="text" id="nombre" placeholder="Tu nombre">
 
-<div id="quinielas"></div>
+<button class="agregar" onclick="agregarQuiniela()">➕ Agregar otra quiniela</button>
 
-<button onclick="agregarQuiniela()">➕ Agregar Quiniela</button>
+<div id="quinielas"></div>
 
 <button onclick="aleatorio()">🎲 Aleatorio</button>
 
@@ -138,12 +147,11 @@ html+=`
 <strong>Partido ${i}</strong>
 
 <div class="opciones">
-
 <label><input type="checkbox" name="q${id}p${i}" value="L"> L</label>
 <label><input type="checkbox" name="q${id}p${i}" value="E"> E</label>
 <label><input type="checkbox" name="q${id}p${i}" value="V"> V</label>
-
 </div>
+
 </div>
 `;
 
@@ -161,8 +169,6 @@ let div=document.createElement("div");
 
 div.className="quiniela";
 
-div.id="quiniela"+totalQuinielas;
-
 div.innerHTML="<h3>Quiniela "+totalQuinielas+"</h3>"+crearPartidos(totalQuinielas);
 
 document.getElementById("quinielas").appendChild(div);
@@ -170,9 +176,7 @@ document.getElementById("quinielas").appendChild(div);
 }
 
 function limpiar(){
-
 document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
-
 }
 
 function aleatorio(){
