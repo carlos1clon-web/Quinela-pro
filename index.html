@@ -1,206 +1,54 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Quiniela Liga MX</title>
-
-<style>
-
-body{
-font-family: Arial;
-background:#0f172a;
-color:white;
-text-align:center;
-padding:20px;
-}
-
-h1{
-color:#22c55e;
-}
-
-.container{
-max-width:500px;
-margin:auto;
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-}
-
-.partido{
-margin:10px 0;
-padding:10px;
-background:#334155;
-border-radius:6px;
-}
-
-select,input{
-width:100%;
-padding:10px;
-margin-top:5px;
-border-radius:5px;
-border:none;
-}
-
-button{
-margin-top:20px;
-padding:12px;
-width:100%;
-background:#22c55e;
-color:white;
-border:none;
-font-size:18px;
-border-radius:6px;
-cursor:pointer;
-}
-
-button:hover{
-background:#16a34a;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>⚽ Quiniela Liga MX</h1>
-
-<div class="container">
-
-<form id="quinielaForm">
-
-<input type="text" id="nombre" placeholder="Tu nombre" required>
-
-<div class="partido">
-Partido 1
-<select id="p1">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 2
-<select id="p2">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 3
-<select id="p3">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 4
-<select id="p4">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 5
-<select id="p5">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 6
-<select id="p6">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 7
-<select id="p7">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 8
-<select id="p8">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<div class="partido">
-Partido 9
-<select id="p9">
-<option value="L">Local</option>
-<option value="E">Empate</option>
-<option value="V">Visitante</option>
-</select>
-</div>
-
-<button type="submit">Enviar Quiniela</button>
-
-</form>
-
-</div>
-
 <script>
 
+/* === CONFIGURACIÓN === /
 const scriptURL = "https://script.google.com/macros/s/AKfycbyi6aFWOTGxwt8y3lhjCa41ZdRQQmwD8OXxGS420uBBlRdk37Y2okA1nKnE5Z3noAM3/exec";
 
-document.getElementById("quinielaForm").addEventListener("submit", function(e){
+/ === FUNCIÓN QUE RECOLECTA LA QUINIELA Y LA GUARDA === /
+function guardarQuinielaEnSheet(){
 
-e.preventDefault();
+  try{
 
-let formData = new FormData();
+    let formData = new FormData();
 
-formData.append("nombre", document.getElementById("nombre").value);
-formData.append("p1", document.getElementById("p1").value);
-formData.append("p2", document.getElementById("p2").value);
-formData.append("p3", document.getElementById("p3").value);
-formData.append("p4", document.getElementById("p4").value);
-formData.append("p5", document.getElementById("p5").value);
-formData.append("p6", document.getElementById("p6").value);
-formData.append("p7", document.getElementById("p7").value);
-formData.append("p8", document.getElementById("p8").value);
-formData.append("p9", document.getElementById("p9").value);
+    // nombre del participante
+    const nombre = document.getElementById("nombre") ? document.getElementById("nombre").value : "";
+    formData.append("nombre", nombre);
 
-fetch(scriptURL,{
-method:"POST",
-body:formData
-})
-.then(response => {
+    // partidos (p1 a p9)
+    for(let i=1;i<=9;i++){
+      const el = document.getElementById("p"+i);
+      if(el){
+        formData.append("p"+i, el.value);
+      }
+    }
 
-alert("Quiniela enviada correctamente ⚽");
+    fetch(scriptURL,{
+      method:"POST",
+      body:formData
+    })
+    .then(()=>console.log("Quiniela guardada en Google Sheets"))
+    .catch(()=>console.log("Error al guardar la quiniela"));
 
-document.getElementById("quinielaForm").reset();
+  }catch(err){
+    console.log("Error:",err);
+  }
 
-})
-.catch(error => {
+}
 
-alert("Error al enviar la quiniela");
+/ === INTERCEPTA EL ENVÍO DEL FORMULARIO SIN ROMPER TU DISEÑO === */
+document.addEventListener("DOMContentLoaded", function(){
 
-});
+  const form = document.getElementById("quinielaForm");
+
+  if(form){
+    form.addEventListener("submit", function(){
+
+      // guarda la quiniela sin afectar lo demás (WhatsApp, etc.)
+      guardarQuinielaEnSheet();
+
+    });
+  }
 
 });
 
 </script>
-
-</body>
