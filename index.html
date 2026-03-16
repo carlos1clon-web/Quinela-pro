@@ -134,23 +134,17 @@ let html="";
 for(let i=1;i<=9;i++){
 
 html+=`
-
 <div class="partido">
-
 <strong>Partido ${i}</strong>
 
 <div class="opciones">
 
 <label><input type="checkbox" name="q${id}p${i}" value="L"> L</label>
-
 <label><input type="checkbox" name="q${id}p${i}" value="E"> E</label>
-
 <label><input type="checkbox" name="q${id}p${i}" value="V"> V</label>
 
 </div>
-
 </div>
-
 `;
 
 }
@@ -167,6 +161,8 @@ let div=document.createElement("div");
 
 div.className="quiniela";
 
+div.id="quiniela"+totalQuinielas;
+
 div.innerHTML="<h3>Quiniela "+totalQuinielas+"</h3>"+crearPartidos(totalQuinielas);
 
 document.getElementById("quinielas").appendChild(div);
@@ -181,11 +177,11 @@ document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
 
 function aleatorio(){
 
-document.querySelectorAll(".quiniela").forEach(q=>{
+document.querySelectorAll(".quiniela").forEach((q,index)=>{
 
 for(let i=1;i<=9;i++){
 
-let opciones=q.querySelectorAll(`[name$=p${i}]`);
+let opciones=q.querySelectorAll(`input[name=q${index+1}p${i}]`);
 
 let r=Math.floor(Math.random()*3);
 
@@ -213,10 +209,8 @@ for(let i=1;i<=9;i++){
 
 let valores=[];
 
-q.querySelectorAll(`[name=q${index+1}p${i}]:checked`).forEach(c=>{
-
+q.querySelectorAll(`input[name=q${index+1}p${i}]:checked`).forEach(c=>{
 valores.push(c.value);
-
 });
 
 formData.append("p"+i,valores.join("-"));
