@@ -106,6 +106,8 @@ Total a pagar: $<span id="total">20</span>
 
 <script>
 
+const scriptURL="https://script.google.com/macros/s/AKfycbw6Uvwl_5nZDln-v13z5iXSZzpDoGf-9B9RWfzrFBuLPLLT_Nd0_nYr57Jb4FDlyPzX/exec";
+
 const partidosDiv=document.getElementById("partidos");
 
 for(let i=1;i<=9;i++){
@@ -216,6 +218,24 @@ let mensaje="Quiniela Liga MX%0A";
 quinielas.forEach((q,i)=>{
 
 mensaje+="Quiniela "+(i+1)+": "+q.join(" | ")+"%0A";
+
+fetch(scriptURL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+nombre:nombre,
+quiniela:i+1,
+p1:q[0],
+p2:q[1],
+p3:q[2],
+p4:q[3],
+p5:q[4],
+p6:q[5],
+p7:q[6],
+p8:q[7],
+p9:q[8]
+})
+});
 
 });
 
