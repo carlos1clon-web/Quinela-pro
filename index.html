@@ -20,7 +20,7 @@ color:#22c55e;
 }
 
 .container{
-max-width:500px;
+max-width:600px;
 margin:auto;
 background:#1e293b;
 padding:20px;
@@ -32,6 +32,13 @@ background:#334155;
 padding:10px;
 border-radius:6px;
 margin-bottom:15px;
+}
+
+.quiniela{
+margin-bottom:20px;
+padding:10px;
+background:#0f172a;
+border-radius:8px;
 }
 
 .partido{
@@ -96,19 +103,17 @@ margin-bottom:10px;
 📞 Informes: 5551234567
 </div>
 
-<form id="quinielaForm">
+<input type="text" id="nombre" placeholder="Tu nombre">
 
-<input type="text" id="nombre" placeholder="Tu nombre" required>
+<div id="quinielas"></div>
 
-<div id="partidos"></div>
+<button onclick="agregarQuiniela()">➕ Agregar Quiniela</button>
 
-<button type="button" onclick="aleatorio()">🎲 Aleatorio</button>
+<button onclick="aleatorio()">🎲 Aleatorio</button>
 
-<button type="button" onclick="limpiar()">🧹 Limpiar</button>
+<button onclick="limpiar()">🧹 Limpiar</button>
 
-<button type="submit">📨 Enviar Quiniela</button>
-
-</form>
+<button onclick="enviar()">📨 Enviar Quinielas</button>
 
 <div class="facebook">
 <a href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">
@@ -120,11 +125,15 @@ Ir al grupo de Facebook
 
 <script>
 
-const partidosDiv=document.getElementById("partidos");
+let totalQuinielas=0;
+
+function crearPartidos(id){
+
+let html="";
 
 for(let i=1;i<=9;i++){
 
-partidosDiv.innerHTML+=`
+html+=`
 
 <div class="partido">
 
@@ -132,17 +141,11 @@ partidosDiv.innerHTML+=`
 
 <div class="opciones">
 
-<label>
-<input type="checkbox" name="p${i}" value="L"> L
-</label>
+<label><input type="checkbox" name="q${id}p${i}" value="L"> L</label>
 
-<label>
-<input type="checkbox" name="p${i}" value="E"> E
-</label>
+<label><input type="checkbox" name="q${id}p${i}" value="E"> E</label>
 
-<label>
-<input type="checkbox" name="p${i}" value="V"> V
-</label>
+<label><input type="checkbox" name="q${id}p${i}" value="V"> V</label>
 
 </div>
 
@@ -152,41 +155,68 @@ partidosDiv.innerHTML+=`
 
 }
 
+return html;
+
+}
+
+function agregarQuiniela(){
+
+totalQuinielas++;
+
+let div=document.createElement("div");
+
+div.className="quiniela";
+
+div.innerHTML="<h3>Quiniela "+totalQuinielas+"</h3>"+crearPartidos(totalQuinielas);
+
+document.getElementById("quinielas").appendChild(div);
+
+}
+
 function limpiar(){
+
 document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+
 }
 
 function aleatorio(){
 
-limpiar();
+document.querySelectorAll(".quiniela").forEach(q=>{
 
 for(let i=1;i<=9;i++){
 
-let opciones=["L","E","V"];
+let opciones=q.querySelectorAll(`[name$=p${i}]`);
+
 let r=Math.floor(Math.random()*3);
 
-document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
+opciones[r].checked=true;
 
 }
+
+});
 
 }
 
 const scriptURL="https://script.google.com/macros/s/AKfycbyi6aFWOTGxwt8y3lhjCa41ZdRQQmwD8OXxGS420uBBlRdk37Y2okA1nKnE5Z3noAM3/exec";
 
-document.getElementById("quinielaForm").addEventListener("submit",function(e){
+function enviar(){
 
-e.preventDefault();
+let nombre=document.getElementById("nombre").value;
+
+document.querySelectorAll(".quiniela").forEach((q,index)=>{
 
 let formData=new FormData();
 
-formData.append("nombre",document.getElementById("nombre").value);
+formData.append("nombre",nombre+" #"+(index+1));
 
 for(let i=1;i<=9;i++){
 
 let valores=[];
 
-document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
+q.querySelectorAll(`[name=q${index+1}p${i}]:checked`).forEach(c=>{
+
 valores.push(c.value);
+
 });
 
 formData.append("p"+i,valores.join("-"));
@@ -196,16 +226,15 @@ formData.append("p"+i,valores.join("-"));
 fetch(scriptURL,{
 method:"POST",
 body:formData
-})
-.then(()=>{
-alert("Quiniela enviada correctamente ⚽");
-document.getElementById("quinielaForm").reset();
-})
-.catch(()=>{
-alert("Error al enviar la quiniela");
 });
 
 });
+
+alert("Quinielas enviadas correctamente ⚽");
+
+}
+
+agregarQuiniela();
 
 </script>
 
