@@ -27,20 +27,20 @@ partidos[p]++
 })
 
 let combinaciones = 1
+let haySeleccion = false
 
 for(let p in partidos){
 
 let sel = partidos[p]
 
-if(sel === 0){
-sel = 1
-}
-
+if(sel > 0){
 combinaciones *= sel
+haySeleccion = true
+}
 
 }
 
-let totalActual = combinaciones * precio
+let totalActual = haySeleccion ? combinaciones * precio : 0
 
 document.getElementById("total").innerText =
 "$" + (totalGuardado + totalActual)
