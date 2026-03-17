@@ -1,6 +1,5 @@
 let quinelas = []
 let precio = 10
-let totalGuardado = 0
 
 document.addEventListener("change", function(e){
 if(e.target.type === "checkbox"){
@@ -10,40 +9,10 @@ calcularTotal()
 
 function calcularTotal(){
 
-let partidos = {}
-
-document.querySelectorAll("input[type=checkbox]").forEach(c=>{
-
-let p = c.dataset.partido
-
-if(!partidos[p]){
-partidos[p] = 0
-}
-
-if(c.checked){
-partidos[p]++
-}
-
-})
-
-let combinaciones = 1
-let haySeleccion = false
-
-for(let p in partidos){
-
-let sel = partidos[p]
-
-if(sel > 0){
-combinaciones *= sel
-haySeleccion = true
-}
-
-}
-
-let totalActual = haySeleccion ? combinaciones * precio : 0
+let total = quinelas.length * precio
 
 document.getElementById("total").innerText =
-"$" + (totalGuardado + totalActual)
+"$" + total
 
 }
 
@@ -52,8 +21,6 @@ function limpiar(){
 document.querySelectorAll("input[type=checkbox]").forEach(c=>{
 c.checked = false
 })
-
-calcularTotal()
 
 }
 
@@ -71,8 +38,6 @@ let r = Math.floor(Math.random()*3)
 opciones[r].checked = true
 
 }
-
-calcularTotal()
 
 }
 
@@ -118,8 +83,6 @@ let combinaciones = generarCombinaciones(partidos)
 combinaciones.forEach(c=>{
 quinelas.push(c)
 })
-
-totalGuardado += combinaciones.length * precio
 
 mostrarQuinielas()
 
@@ -177,12 +140,6 @@ function eliminar(i){
 
 quinelas.splice(i,1)
 
-totalGuardado -= precio
-
-if(totalGuardado<0){
-totalGuardado=0
-}
-
 mostrarQuinielas()
 
 calcularTotal()
@@ -221,7 +178,7 @@ texto+="\n"
 
 })
 
-texto+="Total: $"+totalGuardado
+texto+="Total: $"+(quinelas.length * precio)
 
 let url =
 "https://wa.me/5215610791509?text="
