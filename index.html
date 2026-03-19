@@ -64,12 +64,6 @@ background:#020617;
 padding:10px;
 border-radius:6px;
 }
-
-.link{
-color:#38bdf8;
-display:block;
-margin-top:5px;
-}
 </style>
 </head>
 
@@ -87,8 +81,7 @@ margin-top:5px;
 <div class="info">
 💰 Base $10 | Dobles x2 | Triples x3<br>
 ⏰ Cierre: Viernes 7:00 PM<br>
-📞 Informes: 5551234567<br>
-<a class="link" href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">Ir al grupo de Facebook</a>
+📞 Informes: 5551234567
 </div>
 
 <input type="text" id="nombre" placeholder="Nombre del participante" style="width:100%; padding:10px; margin-bottom:10px;">
@@ -136,7 +129,7 @@ partidosDiv.innerHTML+=`
 `;
 }
 
-// CALCULAR COSTO ACTUAL
+// CALCULAR
 function calcular(){
 
 let dobles=0;
@@ -173,7 +166,7 @@ document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
 calcular();
 }
 
-// AGREGAR
+// 🔥 AGREGAR (DESGLOSE REAL)
 function agregar(){
 
 let nombre=document.getElementById("nombre").value.trim();
@@ -183,11 +176,7 @@ alert("Debes ingresar tu nombre");
 return;
 }
 
-let jugada=[];
-let vacia=false;
-
-let dobles=0;
-let triples=0;
+let partidos=[];
 
 for(let i=1;i<=9;i++){
 
@@ -202,25 +191,43 @@ alert("Debes llenar todos los partidos");
 return;
 }
 
-if(picks.length==2) dobles++;
-if(picks.length==3) triples++;
-
-// SOLO UNA LETRA PARA MOSTRAR
-jugada.push(picks[0]);
+partidos.push(picks);
 }
 
-// COSTO FINAL
-let total = BASE * Math.pow(2,dobles) * Math.pow(3,triples);
+// GENERAR COMBINACIONES
+function generar(arr, index=0){
 
-quinielas.push({jugada, total});
-totalGlobal += total;
+if(index===arr.length) return [[]];
 
-// MOSTRAR
+let resultado=[];
+let resto = generar(arr, index+1);
+
+arr[index].forEach(op=>{
+resto.forEach(r=>{
+resultado.push([op, ...r]);
+});
+});
+
+return resultado;
+}
+
+let combinaciones = generar(partidos);
+
+// MOSTRAR UNA POR UNA
+combinaciones.forEach(combo=>{
+quinielas.push(combo);
+
 document.getElementById("lista").innerHTML+=`
-<div>Quiniela ${quinielas.length}: ${jugada.join(" ")} ($${total})</div>
+<div>Quiniela ${quinielas.length}: ${combo.join(" ")}</div>
 `;
+});
+
+// TOTAL
+totalGlobal += combinaciones.length * BASE;
 
 document.getElementById("total").innerText = totalGlobal;
+
+alert("Se generaron " + combinaciones.length + " quinielas");
 
 limpiar();
 }
@@ -239,7 +246,7 @@ let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
 mensaje+="Nombre: "+nombre+"%0A%0A";
 
 quinielas.forEach((q,i)=>{
-mensaje+="Quiniela "+(i+1)+": "+q.jugada.join(" ")+" ($"+q.total+")%0A";
+mensaje+="Quiniela "+(i+1)+": "+q.join(" ")+"%0A";
 });
 
 mensaje+="%0ATotal: $"+totalGlobal;
