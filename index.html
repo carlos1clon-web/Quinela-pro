@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quinielas Liga MX</title>
+<title>Quiniela Liga MX</title>
 
 <style>
 
@@ -18,6 +18,7 @@ padding:20px;
 .logo{
 width:120px;
 margin-bottom:10px;
+cursor:pointer;
 }
 
 .container{
@@ -65,31 +66,42 @@ padding:10px;
 border-radius:6px;
 }
 
+.link{
+color:#38bdf8;
+display:block;
+margin-top:5px;
+}
+
 </style>
 </head>
 
 <body>
 
+<a href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">
 <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Liga_MX_logo.svg">
+</a>
 
-<h1>Quinielas Liga MX</h1>
+<h1>Quiniela Liga MX</h1>
+<h3>Jornada 1</h3>
 
 <div class="container">
 
 <div class="info">
-💰 Costo por quiniela: $20<br>
+💰 Costo por quiniela: $<span id="precio">20</span><br>
 ⏰ Cierre: Viernes 7:00 PM<br>
-📞 Informes: 5551234567
+📞 Informes: 5551234567<br>
+<a class="link" href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">Ir al grupo de Facebook</a>
 </div>
 
-<input type="text" id="nombre" placeholder="Tu nombre">
+<input type="text" id="nombre" placeholder="Nombre del participante" style="width:100%; padding:10px; margin-bottom:10px;">
 
 <div id="partidos"></div>
 
 <div class="info">
 Dobles: <span id="dobles">0</span><br>
 Triples: <span id="triples">0</span><br>
-Total a pagar: $<span id="total">20</span>
+Quinielas agregadas: <span id="contador">0</span><br>
+Total a pagar: $<span id="total">0</span>
 </div>
 
 <button onclick="aleatorio()">🎲 Aleatorio</button>
@@ -106,32 +118,26 @@ Total a pagar: $<span id="total">20</span>
 
 <script>
 
+const PRECIO = 20;
+let quinielas = [];
+
 const partidosDiv=document.getElementById("partidos");
 
+// CREAR PARTIDOS
 for(let i=1;i<=9;i++){
-
 partidosDiv.innerHTML+=`
-
 <div class="partido">
-
 <strong>Partido ${i}</strong>
-
 <div class="opciones">
-
-<label><input type="checkbox" name="p${i}" onchange="calcular()"> L</label>
-
-<label><input type="checkbox" name="p${i}" onchange="calcular()"> E</label>
-
-<label><input type="checkbox" name="p${i}" onchange="calcular()"> V</label>
-
+<label><input type="checkbox" value="L" name="p${i}" onchange="calcular()"> L</label>
+<label><input type="checkbox" value="E" name="p${i}" onchange="calcular()"> E</label>
+<label><input type="checkbox" value="V" name="p${i}" onchange="calcular()"> V</label>
 </div>
-
 </div>
-
 `;
-
 }
 
+// CALCULAR DOBLES Y TRIPLES
 function calcular(){
 
 let dobles=0;
@@ -142,48 +148,43 @@ for(let i=1;i<=9;i++){
 let seleccion=document.querySelectorAll(`input[name=p${i}]:checked`).length;
 
 if(seleccion==2)dobles++;
-
 if(seleccion==3)triples++;
 
 }
 
-let total=20 + (dobles*5) + (triples*10);
-
 document.getElementById("dobles").innerText=dobles;
 document.getElementById("triples").innerText=triples;
-document.getElementById("total").innerText=total;
 
 }
 
+// LIMPIAR
 function limpiar(){
-
 document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
-
 calcular();
-
 }
 
+// ALEATORIO
 function aleatorio(){
-
 limpiar();
-
 for(let i=1;i<=9;i++){
-
 let r=Math.floor(Math.random()*3);
-
 document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
-
 }
-
 calcular();
-
 }
 
-let quinielas=[];
-
+// AGREGAR QUINIELA
 function agregar(){
 
+let nombre=document.getElementById("nombre").value.trim();
+
+if(nombre===""){
+alert("Debes ingresar tu nombre");
+return;
+}
+
 let jugada=[];
+let vacia=true;
 
 for(let i=1;i<=9;i++){
 
@@ -193,31 +194,54 @@ document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
 picks.push(c.value);
 });
 
-jugada.push(picks.join(""));
+if(picks.length>0) vacia=false;
 
+jugada.push(picks.join(""));
+}
+
+// VALIDAR VACÍA
+if(vacia){
+alert("Debes seleccionar al menos una opción en la quiniela");
+return;
 }
 
 quinielas.push(jugada);
 
+// MOSTRAR
 document.getElementById("lista").innerHTML+=`
 <div>Quiniela ${quinielas.length}: ${jugada.join(" | ")}</div>
 `;
 
-limpiar();
+// ACTUALIZAR TOTAL
+actualizarTotal();
 
+limpiar();
 }
 
+// TOTAL SOLO POR QUINIELAS
+function actualizarTotal(){
+document.getElementById("contador").innerText = quinielas.length;
+document.getElementById("total").innerText = quinielas.length * PRECIO;
+}
+
+// ENVIAR WHATSAPP
 function enviar(){
 
-let nombre=document.getElementById("nombre").value;
+let nombre=document.getElementById("nombre").value.trim();
 
-let mensaje="Quiniela Liga MX%0A";
+if(nombre==="" || quinielas.length===0){
+alert("Falta nombre o quinielas");
+return;
+}
+
+let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
+mensaje+="Nombre: "+nombre+"%0A%0A";
 
 quinielas.forEach((q,i)=>{
-
 mensaje+="Quiniela "+(i+1)+": "+q.join(" | ")+"%0A";
-
 });
+
+mensaje+="%0ATotal: $"+(quinielas.length * PRECIO);
 
 let telefono="5215551234567";
 
