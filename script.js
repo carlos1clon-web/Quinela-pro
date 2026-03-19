@@ -74,7 +74,7 @@ calcularTotalActual()
 
 }
 
-// 🔥 AGREGAR QUINIELA (CON DESGLOSE REAL)
+// 🔥 AGREGAR QUINIELA (DESGLOSE REAL)
 function agregarQuiniela(){
 
 let nombre = document.getElementById("nombre").value.trim()
@@ -106,7 +106,7 @@ if(index===2) opciones.push("V")
 
 // ❌ VALIDAR PARTIDO VACÍO
 if(opciones.length===0){
-alert("Debes seleccionar opción en todos los partidos")
+alert("Debes seleccionar todos los partidos")
 return
 }
 
@@ -117,21 +117,35 @@ partidos.push(opciones)
 // 🔥 GENERAR TODAS LAS COMBINACIONES
 let combinaciones = generarCombinaciones(partidos)
 
-// 🔥 GUARDAR CADA UNA COMO QUINIELA
-combinaciones.forEach(c=>{
-quinelas.push(c)
+// 🔥 MOSTRAR UNA POR UNA (CLAVE 🔥)
+let contenedor = document.getElementById("listaQuinielas")
+
+combinaciones.forEach(combo=>{
+
+quinelas.push(combo)
+
+let div=document.createElement("div")
+
+div.className="quinielaGuardada"
+
+div.innerHTML = `
+<b>Quiniela ${quinelas.length}:</b> ${combo.join(" ")}
+<button onclick="eliminar(${quinelas.length-1})">❌</button>
+`
+
+contenedor.appendChild(div)
+
 })
 
-// 🔥 AVISO AL USUARIO
-alert("Se agregaron " + combinaciones.length + " quinielas")
+// 🔥 MENSAJE CLARO
+alert("Se generaron " + combinaciones.length + " quinielas")
 
-mostrarQuinielas()
 limpiar()
 calcularTotal()
 
 }
 
-// 🔥 FUNCIÓN RECURSIVA (NO TOCAR)
+// 🔥 GENERADOR DE COMBINACIONES
 function generarCombinaciones(arr){
 
 if(arr.length===0) return [[]]
@@ -151,7 +165,17 @@ return resultado
 
 }
 
-// 🔥 MOSTRAR DESGLOSE REAL
+// 🔥 ELIMINAR
+function eliminar(i){
+
+quinelas.splice(i,1)
+
+mostrarQuinielas()
+calcularTotal()
+
+}
+
+// 🔥 MOSTRAR TODAS (RENDER COMPLETO)
 function mostrarQuinielas(){
 
 let contenedor =
@@ -176,17 +200,7 @@ contenedor.appendChild(div)
 
 }
 
-// ELIMINAR
-function eliminar(i){
-
-quinelas.splice(i,1)
-
-mostrarQuinielas()
-calcularTotal()
-
-}
-
-// ENVIAR WHATSAPP
+// 🔥 ENVIAR WHATSAPP
 function enviar(){
 
 let nombre =
