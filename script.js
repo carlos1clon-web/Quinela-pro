@@ -74,7 +74,7 @@ calcularTotalActual()
 
 }
 
-// 🔥 AGREGAR QUINIELA (CON EXPANSIÓN REAL)
+// 🔥 AGREGAR QUINIELA (CON DESGLOSE REAL)
 function agregarQuiniela(){
 
 let nombre = document.getElementById("nombre").value.trim()
@@ -114,23 +114,24 @@ partidos.push(opciones)
 
 }
 
-// 🔥 GENERAR COMBINACIONES
+// 🔥 GENERAR TODAS LAS COMBINACIONES
 let combinaciones = generarCombinaciones(partidos)
 
-// GUARDAR TODAS
+// 🔥 GUARDAR CADA UNA COMO QUINIELA
 combinaciones.forEach(c=>{
 quinelas.push(c)
 })
 
+// 🔥 AVISO AL USUARIO
+alert("Se agregaron " + combinaciones.length + " quinielas")
+
 mostrarQuinielas()
-
 limpiar()
-
 calcularTotal()
 
 }
 
-// 🔥 FUNCIÓN RECURSIVA
+// 🔥 FUNCIÓN RECURSIVA (NO TOCAR)
 function generarCombinaciones(arr){
 
 if(arr.length===0) return [[]]
@@ -150,7 +151,7 @@ return resultado
 
 }
 
-// MOSTRAR
+// 🔥 MOSTRAR DESGLOSE REAL
 function mostrarQuinielas(){
 
 let contenedor =
@@ -164,9 +165,10 @@ let div=document.createElement("div")
 
 div.className="quinielaGuardada"
 
-div.innerHTML=
-q.join(" ") +
-` <button onclick="eliminar(${i})">❌</button>`
+div.innerHTML = `
+<b>Quiniela ${i+1}:</b> ${q.join(" ")}
+<button onclick="eliminar(${i})">❌</button>
+`
 
 contenedor.appendChild(div)
 
@@ -180,12 +182,11 @@ function eliminar(i){
 quinelas.splice(i,1)
 
 mostrarQuinielas()
-
 calcularTotal()
 
 }
 
-// ENVIAR
+// ENVIAR WHATSAPP
 function enviar(){
 
 let nombre =
