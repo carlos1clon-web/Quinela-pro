@@ -198,7 +198,27 @@ contenedor.appendChild(div)
 
 }
 
-// 🔥 ENVIAR WHATSAPP (CORREGIDO)
+// 🔥 ENVIAR A GOOGLE SHEETS
+function enviarASheets(nombre, quinielas){
+
+quinielas.forEach(q => {
+
+fetch("AQUI_VA_TU_URL", {
+  method: "POST",
+  body: JSON.stringify({
+    nombre: nombre,
+    partidos: q
+  })
+})
+.then(res => res.json())
+.then(data => console.log("Guardado en Sheets"))
+.catch(err => console.error("Error:", err))
+
+})
+
+}
+
+// 🔥 ENVIAR WHATSAPP + SHEETS
 function enviar(){
 
 let nombre =
@@ -214,6 +234,9 @@ alert("No hay quinielas agregadas")
 return
 }
 
+// 🔥 ENVÍA A GOOGLE SHEETS
+enviarASheets(nombre, quinielas)
+
 let texto = "QUINIELAS LIGA MX\n\n"
 
 texto += "Participante: " + nombre + "\n\n"
@@ -224,13 +247,10 @@ texto += "Q" + (i+1) + ": " + q.join(" ") + "\n"
 
 texto += "\nTotal: $" + (quinielas.length * precio)
 
-// ✅ NÚMERO CORRECTO
 let telefono = "525610791509"
 
-// ✅ URL BIEN FORMADA
 let url = "https://wa.me/" + telefono + "?text=" + encodeURIComponent(texto)
 
-// 🔥 MEJOR PARA CELULAR
 window.location.href = url
 
 }
