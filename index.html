@@ -85,7 +85,7 @@ margin-top:5px;
 <div class="container">
 
 <div class="info">
-💰 Base por quiniela: $10<br>
+💰 Base $10 | Dobles x2 | Triples x3<br>
 ⏰ Cierre: Viernes 7:00 PM<br>
 📞 Informes: 5551234567<br>
 <a class="link" href="https://www.facebook.com/share/g/16yT4cb2ZC/?mibextid=wwXIfr" target="_blank">Ir al grupo de Facebook</a>
@@ -98,7 +98,7 @@ margin-top:5px;
 <div class="info">
 Dobles: <span id="dobles">0</span><br>
 Triples: <span id="triples">0</span><br>
-Total actual: $<span id="totalActual">10</span><br>
+Total quiniela actual: $<span id="totalActual">10</span><br>
 Total a pagar: $<span id="total">0</span>
 </div>
 
@@ -184,7 +184,10 @@ return;
 }
 
 let jugada=[];
-let vacia=true;
+let vacia=false;
+
+let dobles=0;
+let triples=0;
 
 for(let i=1;i<=9;i++){
 
@@ -194,37 +197,27 @@ document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
 picks.push(c.value);
 });
 
-if(picks.length>0) vacia=false;
-
-jugada.push(picks.join("/")); // para mostrar dobles/triples
-}
-
-// VALIDAR
-if(vacia){
-alert("Debes seleccionar al menos una opción");
+if(picks.length===0){
+alert("Debes llenar todos los partidos");
 return;
 }
 
-// CALCULAR COSTO
-let dobles=0;
-let triples=0;
+if(picks.length==2) dobles++;
+if(picks.length==3) triples++;
 
-for(let i=1;i<=9;i++){
-let count=document.querySelectorAll(`input[name=p${i}]:checked`).length;
-if(count==2) dobles++;
-if(count==3) triples++;
+// SOLO UNA LETRA PARA MOSTRAR
+jugada.push(picks[0]);
 }
 
-let costo = BASE * Math.pow(2,dobles) * Math.pow(3,triples);
+// COSTO FINAL
+let total = BASE * Math.pow(2,dobles) * Math.pow(3,triples);
 
-quinielas.push({jugada, costo});
-totalGlobal += costo;
+quinielas.push({jugada, total});
+totalGlobal += total;
 
-// MOSTRAR FORMATO BONITO
-let textoPlano = jugada.map(j => j.replace("/", "")).join(" ");
-
+// MOSTRAR
 document.getElementById("lista").innerHTML+=`
-<div>Quiniela ${quinielas.length}: ${textoPlano} ($${costo})</div>
+<div>Quiniela ${quinielas.length}: ${jugada.join(" ")} ($${total})</div>
 `;
 
 document.getElementById("total").innerText = totalGlobal;
@@ -246,8 +239,7 @@ let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
 mensaje+="Nombre: "+nombre+"%0A%0A";
 
 quinielas.forEach((q,i)=>{
-let texto = q.jugada.map(j => j.replace("/", "")).join(" ");
-mensaje+="Quiniela "+(i+1)+": "+texto+" ($"+q.costo+")%0A";
+mensaje+="Quiniela "+(i+1)+": "+q.jugada.join(" ")+" ($"+q.total+")%0A";
 });
 
 mensaje+="%0ATotal: $"+totalGlobal;
