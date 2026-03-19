@@ -1,4 +1,4 @@
-let quinelas = []
+let quinielas = []
 let precio = 10
 
 document.addEventListener("change", function(e){
@@ -7,7 +7,7 @@ calcularTotalActual()
 }
 })
 
-// 🔥 TOTAL ACTUAL (ANTES DE AGREGAR)
+// 🔥 TOTAL ACTUAL
 function calcularTotalActual(){
 
 let dobles = 0
@@ -36,7 +36,7 @@ document.getElementById("totalActual").innerText =
 // 🔥 TOTAL GLOBAL
 function calcularTotal(){
 
-let total = quinelas.length * precio
+let total = quinielas.length * precio
 
 document.getElementById("total").innerText =
 "$" + total
@@ -74,7 +74,7 @@ calcularTotalActual()
 
 }
 
-// 🔥 AGREGAR QUINIELA (DESGLOSE REAL)
+// 🔥 AGREGAR QUINIELA
 function agregarQuiniela(){
 
 let nombre = document.getElementById("nombre").value.trim()
@@ -104,7 +104,6 @@ if(index===2) opciones.push("V")
 
 })
 
-// ❌ VALIDAR PARTIDO VACÍO
 if(opciones.length===0){
 alert("Debes seleccionar todos los partidos")
 return
@@ -114,30 +113,29 @@ partidos.push(opciones)
 
 }
 
-// 🔥 GENERAR TODAS LAS COMBINACIONES
+// 🔥 GENERAR COMBINACIONES
 let combinaciones = generarCombinaciones(partidos)
 
-// 🔥 MOSTRAR UNA POR UNA (CLAVE 🔥)
+// 🔥 MOSTRAR
 let contenedor = document.getElementById("listaQuinielas")
 
 combinaciones.forEach(combo=>{
 
-quinelas.push(combo)
+quinielas.push(combo)
 
 let div=document.createElement("div")
 
 div.className="quinielaGuardada"
 
 div.innerHTML = `
-<b>Quiniela ${quinelas.length}:</b> ${combo.join(" ")}
-<button onclick="eliminar(${quinelas.length-1})">❌</button>
+<b>Quiniela ${quinielas.length}:</b> ${combo.join(" ")}
+<button onclick="eliminar(${quinielas.length-1})">❌</button>
 `
 
 contenedor.appendChild(div)
 
 })
 
-// 🔥 MENSAJE CLARO
 alert("Se generaron " + combinaciones.length + " quinielas")
 
 limpiar()
@@ -145,7 +143,7 @@ calcularTotal()
 
 }
 
-// 🔥 GENERADOR DE COMBINACIONES
+// 🔥 GENERADOR
 function generarCombinaciones(arr){
 
 if(arr.length===0) return [[]]
@@ -168,14 +166,14 @@ return resultado
 // 🔥 ELIMINAR
 function eliminar(i){
 
-quinelas.splice(i,1)
+quinielas.splice(i,1)
 
 mostrarQuinielas()
 calcularTotal()
 
 }
 
-// 🔥 MOSTRAR TODAS (RENDER COMPLETO)
+// 🔥 RENDER
 function mostrarQuinielas(){
 
 let contenedor =
@@ -183,7 +181,7 @@ document.getElementById("listaQuinielas")
 
 contenedor.innerHTML=""
 
-quinelas.forEach((q,i)=>{
+quinielas.forEach((q,i)=>{
 
 let div=document.createElement("div")
 
@@ -200,7 +198,7 @@ contenedor.appendChild(div)
 
 }
 
-// 🔥 ENVIAR WHATSAPP
+// 🔥 ENVIAR WHATSAPP (CORREGIDO)
 function enviar(){
 
 let nombre =
@@ -211,26 +209,28 @@ alert("Escribe tu nombre")
 return
 }
 
-if(quinelas.length===0){
+if(quinielas.length===0){
 alert("No hay quinielas agregadas")
 return
 }
 
-let texto =
-"QUINIELAS LIGA MX\n\n"
+let texto = "QUINIELAS LIGA MX\n\n"
 
-texto+="Participante: "+nombre+"\n\n"
+texto += "Participante: " + nombre + "\n\n"
 
-quinelas.forEach((q,i)=>{
-texto+="Q"+(i+1)+": "+q.join(" ")+"\n"
+quinielas.forEach((q,i)=>{
+texto += "Q" + (i+1) + ": " + q.join(" ") + "\n"
 })
 
-texto+="\nTotal: $"+(quinelas.length * precio)
+texto += "\nTotal: $" + (quinielas.length * precio)
 
-let url =
-"https://wa.me/5215610791509?text="
-+encodeURIComponent(texto)
+// ✅ NÚMERO CORRECTO
+let telefono = "525610791509"
 
-window.open(url)
+// ✅ URL BIEN FORMADA
+let url = "https://wa.me/" + telefono + "?text=" + encodeURIComponent(texto)
+
+// 🔥 MEJOR PARA CELULAR
+window.location.href = url
 
 }
