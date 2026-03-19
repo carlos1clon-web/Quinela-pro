@@ -3,10 +3,37 @@ let precio = 10
 
 document.addEventListener("change", function(e){
 if(e.target.type === "checkbox"){
-calcularTotal()
+calcularTotalActual()
 }
 })
 
+// 🔥 TOTAL ACTUAL (ANTES DE AGREGAR)
+function calcularTotalActual(){
+
+let dobles = 0
+let triples = 0
+
+for(let i=1;i<=9;i++){
+
+let seleccion =
+document.querySelectorAll(`input[data-partido="${i}"]:checked`).length
+
+if(seleccion===2) dobles++
+if(seleccion===3) triples++
+
+}
+
+let combinaciones =
+Math.pow(2,dobles) * Math.pow(3,triples)
+
+let total = combinaciones * precio
+
+document.getElementById("totalActual").innerText =
+"$" + total
+
+}
+
+// 🔥 TOTAL GLOBAL
 function calcularTotal(){
 
 let total = quinelas.length * precio
@@ -16,14 +43,18 @@ document.getElementById("total").innerText =
 
 }
 
+// LIMPIAR
 function limpiar(){
 
 document.querySelectorAll("input[type=checkbox]").forEach(c=>{
 c.checked = false
 })
 
+calcularTotalActual()
+
 }
 
+// ALEATORIO
 function aleatorio(){
 
 limpiar()
@@ -39,8 +70,11 @@ opciones[r].checked = true
 
 }
 
+calcularTotalActual()
+
 }
 
+// 🔥 AGREGAR QUINIELA (CON EXPANSIÓN REAL)
 function agregarQuiniela(){
 
 let nombre = document.getElementById("nombre").value.trim()
@@ -70,16 +104,20 @@ if(index===2) opciones.push("V")
 
 })
 
+// ❌ VALIDAR PARTIDO VACÍO
 if(opciones.length===0){
-opciones=["-"]
+alert("Debes seleccionar opción en todos los partidos")
+return
 }
 
 partidos.push(opciones)
 
 }
 
+// 🔥 GENERAR COMBINACIONES
 let combinaciones = generarCombinaciones(partidos)
 
+// GUARDAR TODAS
 combinaciones.forEach(c=>{
 quinelas.push(c)
 })
@@ -92,6 +130,7 @@ calcularTotal()
 
 }
 
+// 🔥 FUNCIÓN RECURSIVA
 function generarCombinaciones(arr){
 
 if(arr.length===0) return [[]]
@@ -102,17 +141,16 @@ let resto = generarCombinaciones(arr.slice(1))
 let resultado=[]
 
 primero.forEach(p=>{
-
 resto.forEach(r=>{
 resultado.push([p,...r])
 })
-
 })
 
 return resultado
 
 }
 
+// MOSTRAR
 function mostrarQuinielas(){
 
 let contenedor =
@@ -136,6 +174,7 @@ contenedor.appendChild(div)
 
 }
 
+// ELIMINAR
 function eliminar(i){
 
 quinelas.splice(i,1)
@@ -146,10 +185,11 @@ calcularTotal()
 
 }
 
+// ENVIAR
 function enviar(){
 
 let nombre =
-document.getElementById("nombre").value
+document.getElementById("nombre").value.trim()
 
 if(nombre===""){
 alert("Escribe tu nombre")
@@ -167,18 +207,10 @@ let texto =
 texto+="Participante: "+nombre+"\n\n"
 
 quinelas.forEach((q,i)=>{
-
-texto+="Quiniela "+(i+1)+"\n"
-
-q.forEach((p,j)=>{
-texto+="Partido "+(j+1)+": "+p+"\n"
+texto+="Q"+(i+1)+": "+q.join(" ")+"\n"
 })
 
-texto+="\n"
-
-})
-
-texto+="Total: $"+(quinelas.length * precio)
+texto+="\nTotal: $"+(quinelas.length * precio)
 
 let url =
 "https://wa.me/5215610791509?text="
