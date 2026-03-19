@@ -47,3 +47,9 @@ color:white;
 background:green;
 color:white;
 }
+a[href^="tel"],
+a[href*="wa.me"]{
+color:#22c55e !important;
+font-weight:bold;
+text-decoration:none !important;
+}
