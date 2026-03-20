@@ -203,7 +203,7 @@ function enviarASheets(nombre, quinielas){
 
 quinielas.forEach(q => {
 
-fetch("https://script.google.com/macros/s/AKfycbwOUIIuDNeuqpBtlGWU19-y083nj41_6h1thQ2jHLqux8KsfNnRlrjo9LpvDK-JJL/exec", {
+fetch("https://script.google.com/macros/s/AKfycbwy45c3eHH8uLcSHibykU1vJD6eGx1jlb37f4AMoaqkzhGnxhdd-ZtiuQP-mVfrfXU0Eg/exec", {
   method: "POST",
   body: JSON.stringify({
     nombre: nombre,
