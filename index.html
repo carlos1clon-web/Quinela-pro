@@ -228,13 +228,13 @@ function enviar(){
 
 let nombre=document.getElementById("nombre").value.trim();
 
-console.log("ENVIANDO:", nombre, quinielas);
-alert(JSON.stringify(quinielas));
-
 if(nombre==="" || quinielas.length===0){
 alert("Falta nombre o quinielas");
 return;
 }
+
+console.log("ENVIANDO:", nombre, quinielas);
+alert(JSON.stringify(quinielas));
 
 let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
 mensaje+="Nombre: "+nombre+"%0A%0A";
