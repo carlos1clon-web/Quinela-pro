@@ -207,12 +207,11 @@ fetch("https://script.google.com/macros/s/AKfycbwy45c3eHH8uLcSHibykU1vJD6eGx1jlb
   method: "POST",
   body: JSON.stringify({
     nombre: nombre,
-    juego: q,
-    total: 1
+    juego: q
   })
 })
 .then(res => res.text())
-.then(data => console.log("Guardado:", data))
+.then(data => console.log("Respuesta:", data))
 .catch(err => console.error("Error:", err));
 
 })
