@@ -205,17 +205,15 @@ quinielas.forEach(q => {
 
 fetch("https://script.google.com/macros/s/AKfycbwy45c3eHH8uLcSHibykU1vJD6eGx1jlb37f4AMoaqkzhGnxhdd-ZtiuQP-mVfrfXU0Eg/exec", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
   body: JSON.stringify({
     nombre: nombre,
-    partidos: q
+    juego: q,
+    total: 1
   })
 })
-.then(res => res.text()) // 👈 IMPORTANTE
+.then(res => res.text())
 .then(data => console.log("Guardado:", data))
-.catch(err => console.error("Error:", err))
+.catch(err => console.error("Error:", err));
 
 })
 
