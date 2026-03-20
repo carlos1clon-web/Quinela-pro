@@ -228,6 +228,9 @@ function enviar(){
 
 let nombre=document.getElementById("nombre").value.trim();
 
+console.log("ENVIANDO:", nombre, quinielas);
+alert(JSON.stringify(quinielas));
+
 if(nombre==="" || quinielas.length===0){
 alert("Falta nombre o quinielas");
 return;
