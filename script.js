@@ -201,23 +201,16 @@ contenedor.appendChild(div)
 // 🔥 ENVIAR A GOOGLE SHEETS
 function enviarASheets(nombre, quinielas){
 
-quinielas.forEach(q => {
-
 fetch("https://script.google.com/macros/s/AKfycbwy45c3eHH8uLcSHibykU1vJD6eGx1jlb37f4AMoaqkzhGnxhdd-ZtiuQP-mVfrfXU0Eg/exec", {
   method: "POST",
-  headers: {
-    "Content-Type": "text/plain"
-  },
   body: JSON.stringify({
     nombre: nombre,
-    juego: q
+    juego: JSON.stringify(quinielas)
   })
 })
 .then(res => res.text())
 .then(data => console.log("Respuesta:", data))
 .catch(err => console.error("Error:", err));
-
-});
 
 }
 
