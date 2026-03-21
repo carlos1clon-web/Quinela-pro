@@ -238,22 +238,21 @@ console.log("ENVIANDO:", nombre, quinielas);
 // ------------------------
 // 1. ENVIAR A GOOGLE SHEETS
 // ------------------------
-let datos = {
-nombre: nombre,
-quinielas: quinielas,
-total: totalGlobal
-};
-
 fetch("https://script.google.com/macros/s/AKfycbzBH8KDiq7mAxT8WYhwH_LoNEK1j1kZqA04M11jGaHFFXxPAvPJOlagwSZP3-SXL41i7w/exec", {
-method: "POST",
-body: JSON.stringify(datos)
+  method: "POST",
+  body: JSON.stringify(datos),
+  headers: {
+    "Content-Type": "application/json"
+  }
 })
 .then(res => res.text())
 .then(res => {
-console.log("Guardado en Sheets:", res);
+  console.log("Guardado en Sheets:", res);
+  alert("Quiniela guardada en Google Sheets ✔"); // 👈 AGREGA ESTO
 })
 .catch(err => {
-console.log("Error Sheets:", err);
+  console.log("Error Sheets:", err);
+  alert("Error al guardar en Sheets ❌");
 });
 
 // ------------------------
