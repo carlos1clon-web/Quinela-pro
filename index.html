@@ -234,19 +234,20 @@ let datos = {
   fecha: new Date().toLocaleString()
 };
 
-fetch("https://script.google.com/macros/s/AKfycbzBH8KDiq7mAxT8WYhwH_LoNEK1j1kZqA04M11jGaHFFXxPAvPJOlagwSZP3-SXL41i7w/exec", {
+fetch("https://script.google.com/macros/s/AKfycbzGUprw2QAYYl6i3-uu6DPgmvogkUCk3m29dBYisr_T2lGXfmMHPvr9FcrUhNWb69tZ3w/exec", {
   method: "POST",
-  mode: "no-cors",
   body: JSON.stringify(datos),
   headers: {
     "Content-Type": "application/json"
   }
 })
-.then(() => {
-  alert("Quiniela guardada en Google Sheets ✔");
+.then(res => res.text())
+.then(res => {
+  alert("Respuesta real: " + res);
 })
-.catch(() => {
-  alert("Error al guardar ❌");
+.catch(err => {
+  alert("Error real");
+  console.log(err);
 });
 
 let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
