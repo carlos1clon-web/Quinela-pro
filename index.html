@@ -1,13 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <meta name="format-detection" content="telephone=no">
-
 <title>Quiniela Liga MX</title>
 
 <style>
@@ -88,8 +85,7 @@ border-radius:6px;
 💰 Base $10 | Dobles x2 | Triples x3<br>
 ⏰ Cierre: Viernes 7:00 PM<br>
 📞 Informes: 
-<a href="https://wa.me/525610791509" target="_blank" 
-style="color:#22c55e !important; font-weight:bold; text-decoration:none;">
+<a href="https://wa.me/525610791509" target="_blank" style="color:#22c55e !important; font-weight:bold; text-decoration:none;">
 5572246040
 </a>
 </div>
@@ -108,13 +104,11 @@ Total a pagar: $<span id="total">0</span>
 <button onclick="aleatorio()">🎲 Aleatorio</button>
 <button onclick="limpiar()">🧹 Limpiar</button>
 <button onclick="agregar()">➕ Agregar Quiniela</button>
-<button onclick="enviar()">📲 Enviar por WhatsApp</button>
+<button onclick="enviar()">📲 Enviar</button>
 
 <div class="resultados">
 <h3>Quinielas agregadas</h3>
 <div id="lista"></div>
-</div>
-
 </div>
 
 <script>
@@ -233,33 +227,31 @@ alert("Falta nombre o quinielas");
 return;
 }
 
-console.log("ENVIANDO:", nombre, quinielas);
+let datos = {
+  nombre: nombre,
+  quinielas: quinielas,
+  total: totalGlobal,
+  fecha: new Date().toLocaleString()
+};
 
-// ------------------------
-// 1. ENVIAR A GOOGLE SHEETS
-// ------------------------
 fetch("https://script.google.com/macros/s/AKfycbzBH8KDiq7mAxT8WYhwH_LoNEK1j1kZqA04M11jGaHFFXxPAvPJOlagwSZP3-SXL41i7w/exec", {
   method: "POST",
+  mode: "no-cors",
   body: JSON.stringify(datos),
   headers: {
     "Content-Type": "application/json"
   }
 })
-.then(res => res.text())
-.then(res => {
-  console.log("Guardado en Sheets:", res);
-  alert("Quiniela guardada en Google Sheets ✔"); // 👈 AGREGA ESTO
+.then(() => {
+  alert("Quiniela guardada en Google Sheets ✔");
 })
-.catch(err => {
-  console.log("Error Sheets:", err);
-  alert("Error al guardar en Sheets ❌");
+.catch(() => {
+  alert("Error al guardar ❌");
 });
 
-// ------------------------
-// 2. WHATSAPP (igual que antes)
-// ------------------------
 let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
-mensaje+="Nombre: "+nombre+"%0A%0A";
+mensaje+="Nombre: "+nombre+"%0A";
+mensaje+="Fecha: "+datos.fecha+"%0A%0A";
 
 quinielas.forEach((q,i)=>{
 mensaje+="Quiniela "+(i+1)+": "+q.join(" ")+"%0A";
@@ -271,6 +263,11 @@ let telefono="525610791509";
 let url="https://wa.me/"+telefono+"?text="+mensaje;
 
 window.open(url,"_blank");
+
+quinielas=[];
+totalGlobal=0;
+document.getElementById("lista").innerHTML="";
+document.getElementById("total").innerText="0";
 
 }
 
