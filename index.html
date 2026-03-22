@@ -234,18 +234,35 @@ let datos = {
   fecha: new Date().toLocaleString()
 };
 
-fetch("https://script.google.com/macros/s/AKfycbyaCB1TJg9GD5P4RtR7eDLQQf7_ghVUIqzBAxAMT2b4ogsbDTJ73Gjbwa6DG9Z227uMdg/exec", {
-  method: "POST",
-  mode: "no-cors",
-  body: JSON.stringify(datos)
-})
-.then(() => {
-  alert("Enviado correctamente ✅");
-})
-.catch(err => {
-  alert("Error al enviar ❌");
-  console.log(err);
-});
+function doPost(e) {
+  try {
+
+    var sheet = SpreadsheetApp
+      .openById("1cKAlExpG1lEV46R3rxsLnbP67BckwuxNLmglZqmOOPE")
+      .getSheetByName("quinielas");
+
+    if (!sheet) {
+      throw new Error("No existe la hoja 'quinielas'");
+    }
+
+    var data = JSON.parse(e.postData.contents);
+
+    sheet.appendRow([
+      new Date(),
+      data.nombre || "sin nombre",
+      JSON.stringify(data.quinielas || []),
+      data.total || 0
+    ]);
+
+    return ContentService
+      .createTextOutput("ok");
+
+  } catch (error) {
+
+    return ContentService
+      .createTextOutput("error: " + error.message);
+  }
+}
 
 let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
 mensaje+="Nombre: "+nombre+"%0A";
