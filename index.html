@@ -222,18 +222,55 @@ total: totalGlobal,
 fecha: new Date().toLocaleString()
 };
 
-fetch("https://script.google.com/macros/s/AKfycbzVQ8wLcscaviULCNOWwXugrxSFQ_dKKD_D9M0AF8zz5TsG2KcD7dxTqzsCA2gUzTMEQQ/exec", {
-  method: "POST",
-  body: JSON.stringify(datos)
-})
-.then(res => res.text())
-.then(res => {
-  alert("Respuesta real: " + res);
-})
-.catch(err => {
-  alert("Error al enviar");
-  console.log(err);
-});
+function enviar(){
+  let nombre = document.getElementById("nombre").value.trim();
+
+  if(nombre === "" || quinielas.length === 0){
+    alert("Falta nombre o quinielas");
+    return;
+  }
+
+  let datos = {
+    nombre: nombre,
+    quinielas: quinielas,
+    total: totalGlobal,
+    fecha: new Date().toLocaleString()
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbzVQ8wLcscaviULCNOWwXugrxSFQ_dKKD_D9M0AF8zz5TsG2KcD7dxTqzsCA2gUzTMEQQ/exec", {
+    method: "POST",
+    body: JSON.stringify(datos),
+    headers: {
+      "Content-Type": "text/plain"
+    }
+  })
+  .then(res => res.text())
+  .then(res => {
+    alert("Respuesta real: " + res);
+  })
+  .catch(err => {
+    alert("Error al enviar");
+    console.log(err);
+  });
+
+  // WhatsApp
+  let mensaje="*Quiniela Liga MX*%0A";
+  mensaje+="Nombre: "+nombre+"%0A";
+  mensaje+="Fecha: "+datos.fecha+"%0A%0A";
+
+  quinielas.forEach((q,i)=>{
+    mensaje+="Quiniela "+(i+1)+": "+q.join(" ")+"%0A";
+  });
+
+  mensaje+="%0ATotal: $"+totalGlobal;
+
+  window.open("https://wa.me/525610791509?text="+mensaje, "_blank");
+
+  quinielas=[];
+  totalGlobal=0;
+  document.getElementById("lista").innerHTML="";
+  document.getElementById("total").innerText="0";
+}
 
 // WhatsApp
 let mensaje="*Quiniela Liga MX*%0A";
