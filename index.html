@@ -236,17 +236,14 @@ let datos = {
 
 fetch("https://script.google.com/macros/s/AKfycbyaCB1TJg9GD5P4RtR7eDLQQf7_ghVUIqzBAxAMT2b4ogsbDTJ73Gjbwa6DG9Z227uMdg/exec", {
   method: "POST",
-  body: JSON.stringify(datos),
-  headers: {
-    "Content-Type": "application/json"
-  }
+  mode: "no-cors",
+  body: JSON.stringify(datos)
 })
-.then(res => res.text())
-.then(res => {
-  alert("Respuesta real: " + res);
+.then(() => {
+  alert("Enviado correctamente ✅");
 })
 .catch(err => {
-  alert("Error real");
+  alert("Error al enviar ❌");
   console.log(err);
 });
 
