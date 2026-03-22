@@ -16,15 +16,6 @@ text-align:center;
 padding:20px;
 }
 
-.logo{
-width:120px;
-margin-bottom:10px;
-cursor:pointer;
-background:white;
-padding:6px;
-border-radius:8px;
-}
-
 .info{
 background:#334155;
 padding:10px;
@@ -53,6 +44,7 @@ border:none;
 color:white;
 font-size:16px;
 border-radius:6px;
+cursor:pointer;
 }
 
 .resultados{
@@ -62,6 +54,7 @@ padding:10px;
 border-radius:6px;
 }
 </style>
+
 </head>
 
 <body>
@@ -74,14 +67,15 @@ border-radius:6px;
 ⏰ Cierre: Viernes 7:00 PM
 </div>
 
-<input type="text" id="nombre" placeholder="Nombre del participante" style="width:100%; padding:10px; margin-bottom:10px;">
+<input type="text" id="nombre" placeholder="Nombre del participante"
+style="width:100%; padding:10px; margin-bottom:10px;">
 
 <div id="partidos"></div>
 
 <div class="info">
 Dobles: <span id="dobles">0</span><br>
 Triples: <span id="triples">0</span><br>
-Total quiniela actual: $<span id="totalActual">10</span><br>
+Total actual: $<span id="totalActual">10</span><br>
 Total a pagar: $<span id="total">0</span>
 </div>
 
@@ -101,11 +95,11 @@ const BASE = 10;
 let quinielas = [];
 let totalGlobal = 0;
 
-const partidosDiv=document.getElementById("partidos");
-
 // Crear partidos
+const partidosDiv = document.getElementById("partidos");
+
 for(let i=1;i<=9;i++){
-partidosDiv.innerHTML+=`
+partidosDiv.innerHTML += `
 <div class="partido">
 <strong>Partido ${i}</strong>
 <div class="opciones">
@@ -117,13 +111,13 @@ partidosDiv.innerHTML+=`
 `;
 }
 
-// Calcular costo
+// Calcular
 function calcular(){
 let dobles=0;
 let triples=0;
 
 for(let i=1;i<=9;i++){
-let seleccion=document.querySelectorAll(`input[name=p${i}]:checked`).length;
+let seleccion = document.querySelectorAll(`input[name="p${i}"]:checked`).length;
 if(seleccion==2) dobles++;
 if(seleccion==3) triples++;
 }
@@ -137,7 +131,7 @@ document.getElementById("totalActual").innerText=total;
 
 // Limpiar
 function limpiar(){
-document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+document.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=false);
 calcular();
 }
 
@@ -145,8 +139,9 @@ calcular();
 function aleatorio(){
 limpiar();
 for(let i=1;i<=9;i++){
-let r=Math.floor(Math.random()*3);
-document.querySelectorAll(`input[name=p${i}]`)[r].checked=true;
+let opciones = document.querySelectorAll(`input[name="p${i}"]`);
+let r = Math.floor(Math.random()*3);
+opciones[r].checked = true;
 }
 calcular();
 }
@@ -154,21 +149,22 @@ calcular();
 // Agregar quiniela
 function agregar(){
 
-let nombre=document.getElementById("nombre").value.trim();
-if(nombre===""){
+let nombre = document.getElementById("nombre").value.trim();
+
+if(nombre === ""){
 alert("Debes ingresar tu nombre");
 return;
 }
 
-let partidos=[];
+let partidos = [];
 
 for(let i=1;i<=9;i++){
-let picks=[];
-document.querySelectorAll(`input[name=p${i}]:checked`).forEach(c=>{
+let picks = [];
+document.querySelectorAll(`input[name="p${i}"]:checked`).forEach(c=>{
 picks.push(c.value);
 });
 
-if(picks.length===0){
+if(picks.length === 0){
 alert("Debes llenar todos los partidos");
 return;
 }
@@ -177,8 +173,9 @@ partidos.push(picks);
 }
 
 function generar(arr, index=0){
-if(index===arr.length) return [[]];
-let resultado=[];
+if(index === arr.length) return [[]];
+
+let resultado = [];
 let resto = generar(arr, index+1);
 
 arr[index].forEach(op=>{
@@ -194,12 +191,13 @@ let combinaciones = generar(partidos);
 
 combinaciones.forEach(combo=>{
 quinielas.push(combo);
-document.getElementById("lista").innerHTML+=`
+document.getElementById("lista").innerHTML += `
 <div>Quiniela ${quinielas.length}: ${combo.join(" ")}</div>
 `;
 });
 
 totalGlobal += combinaciones.length * BASE;
+
 document.getElementById("total").innerText = totalGlobal;
 
 alert("Se generaron " + combinaciones.length + " quinielas");
@@ -207,7 +205,7 @@ alert("Se generaron " + combinaciones.length + " quinielas");
 limpiar();
 }
 
-// Enviar
+// ENVIAR
 function enviar(){
 
 let nombre = document.getElementById("nombre").value.trim();
@@ -218,53 +216,49 @@ return;
 }
 
 let datos = {
-  nombre: nombre,
-  quinielas: quinielas,
-  total: totalGlobal,
-  fecha: new Date().toLocaleString()
+nombre: nombre,
+quinielas: quinielas,
+total: totalGlobal,
+fecha: new Date().toLocaleString()
 };
 
-// 🔥 ENVÍO
-fetch("https://script.google.com/macros/s/AKfycbyJ9_6Oy-81YDVDmjvhsNVzTPaxZxLQc25dAMe7F4tpuPRMt7L-LXEol_Pc_OnSIMA4_w/exec", {
-  method: "POST",
-  body: JSON.stringify(datos),
-  headers: {
-    "Content-Type": "application/json"
-  }
+fetch("https://script.google.com/macros/s/AKfycbzVQ8wLcscaviULCNOWwXugrxSFQ_dKKD_D9M0AF8zz5TsG2KcD7dxTqzsCA2gUzTMEQQ/exec", {
+method: "POST",
+body: JSON.stringify(datos),
+headers: {
+"Content-Type": "application/json"
+}
 })
 .then(res => res.text())
 .then(res => {
-
-  if(res.includes("ok")){
-    alert("✅ Quinielas guardadas correctamente");
-
-    // WhatsApp SOLO si guardó bien
-    let mensaje="*Quiniela Liga MX*%0A";
-    mensaje+="Nombre: "+nombre+"%0A%0A";
-
-    quinielas.forEach((q,i)=>{
-      mensaje+="Quiniela "+(i+1)+": "+q.join(" ")+"%0A";
-    });
-
-    mensaje+="%0ATotal: $"+totalGlobal;
-
-    window.open("https://wa.me/525610791509?text="+mensaje,"_blank");
-
-    // Reset
-    quinielas=[];
-    totalGlobal=0;
-    document.getElementById("lista").innerHTML="";
-    document.getElementById("total").innerText="0";
-
-  } else {
-    alert("❌ Error al guardar: " + res);
-  }
-
+alert("Respuesta real: " + res);
 })
 .catch(err => {
-  alert("❌ Error de conexión");
-  console.log(err);
+alert("Error al enviar");
+console.log(err);
 });
+
+// WhatsApp
+let mensaje="*Quiniela Liga MX*%0A";
+mensaje+="Nombre: "+nombre+"%0A";
+mensaje+="Fecha: "+datos.fecha+"%0A%0A";
+
+quinielas.forEach((q,i)=>{
+mensaje+="Quiniela "+(i+1)+": "+q.join(" ")+"%0A";
+});
+
+mensaje+="%0ATotal: $"+totalGlobal;
+
+let telefono="525610791509";
+let url="https://wa.me/"+telefono+"?text="+mensaje;
+
+window.open(url,"_blank");
+
+// Reset
+quinielas=[];
+totalGlobal=0;
+document.getElementById("lista").innerHTML="";
+document.getElementById("total").innerText="0";
 
 }
 
