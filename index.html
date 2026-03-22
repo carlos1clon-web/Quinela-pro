@@ -234,35 +234,37 @@ let datos = {
   fecha: new Date().toLocaleString()
 };
 
-function doPost(e) {
-  try {
+function enviar(){
 
-    var sheet = SpreadsheetApp
-      .openById("1cKAlExpG1lEV46R3rxsLnbP67BckwuxNLmglZqmOOPE")
-      .getSheetByName("quinielas");
+let nombre = document.getElementById("nombre").value.trim();
 
-    if (!sheet) {
-      throw new Error("No existe la hoja 'quinielas'");
-    }
-
-    var data = JSON.parse(e.postData.contents);
-
-    sheet.appendRow([
-      new Date(),
-      data.nombre || "sin nombre",
-      JSON.stringify(data.quinielas || []),
-      data.total || 0
-    ]);
-
-    return ContentService
-      .createTextOutput("ok");
-
-  } catch (error) {
-
-    return ContentService
-      .createTextOutput("error: " + error.message);
-  }
+if(nombre === "" || quinielas.length === 0){
+alert("Falta nombre o quinielas");
+return;
 }
+
+let datos = {
+  nombre: nombre,
+  quinielas: quinielas,
+  total: totalGlobal,
+  fecha: new Date().toLocaleString()
+};
+
+fetch("https://script.google.com/macros/s/AKfycbyJ9_6Oy-81YDVDmjvhsNVzTPaxZxLQc25dAMe7F4tpuPRMt7L-LXEol_Pc_OnSIMA4_w/exec", {
+  method: "POST",
+  body: JSON.stringify(datos),
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+.then(res => res.text())
+.then(res => {
+  alert("Respuesta real: " + res);
+})
+.catch(err => {
+  alert("Error real");
+  console.log(err);
+});
 
 let mensaje="*Quiniela Liga MX - Jornada 1*%0A";
 mensaje+="Nombre: "+nombre+"%0A";
