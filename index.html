@@ -110,7 +110,6 @@
 
     const partidosDiv = document.getElementById("partidos");
 
-    // Generar los 9 partidos
     for (let i = 1; i <= 9; i++) {
       partidosDiv.innerHTML += `
         <div class="partido">
@@ -173,7 +172,6 @@
         partidos.push(picks);
       }
 
-      // Generar todas las combinaciones
       function generarCombinaciones(arr, idx = 0) {
         if (idx === arr.length) return [[]];
         let res = [];
@@ -212,29 +210,20 @@
         fecha: new Date().toLocaleString("es-MX", { timeZone: "America/Mexico_City" })
       };
 
-      // URL de tu Google Apps Script (cámbiala por la tuya actual)
       const url = "https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec";
 
       fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        mode: "no-cors",
         body: JSON.stringify(datos)
       })
-      .then(res => res.text())
-      .then(texto => {
-        console.log("Respuesta servidor:", texto);
-        if (texto.startsWith("OK")) {
-          alert("¡Quiniela guardada en Google Sheets! ✓");
-        } else {
-          alert("Problema al guardar:\n" + texto);
-        }
+      .then(() => {
+        alert("¡Quiniela guardada en Google Sheets! ✓");
       })
-      .catch(err => {
-        console.error("Error:", err);
-        alert("No se pudo conectar al servidor.\nRevisa tu internet o la URL del script.");
+      .catch(() => {
+        alert("Error al guardar");
       });
 
-      // Preparar mensaje para WhatsApp
       let mensaje = `*Quiniela Liga MX*%0A`;
       mensaje += `Nombre: ${nombre}%0A`;
       mensaje += `Fecha: ${datos.fecha}%0A%0A`;
@@ -247,7 +236,6 @@
 
       window.open("https://wa.me/525610791509?text=" + mensaje, "_blank");
 
-      // Limpiar todo después de enviar
       quinielas = [];
       totalGlobal = 0;
       document.getElementById("lista").innerHTML = "";
