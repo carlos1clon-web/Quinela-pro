@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="format-detection" content="telephone=no">
 <title>Quiniela Liga MX</title>
 
 <style>
@@ -12,14 +11,14 @@ body{
   background:#0f172a;
   color:white;
   text-align:center;
-  padding:20px;
   margin:0;
+  padding:20px;
 }
 
 .container{
   max-width:600px;
   margin:auto;
-  background:#1e293b;
+  background:#por
   padding:20px;
   border-radius:10px;
 }
@@ -46,6 +45,32 @@ button{
   color:white;
   cursor:pointer;
 }
+
+button:hover{
+  background:#16a34a;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:none;
+}
+
+.top-bar{
+  background:#991b1b;
+  padding:8px;
+  border-radius:6px;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+.facebook a{
+  color:#60a5fa;
+  text-decoration:none;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -54,6 +79,15 @@ button{
 <div class="container">
 
 <h1>Quiniela Liga MX</h1>
+
+<div class="top-bar">
+⚠️ Cierre de quiniela: 1 hora antes del primer partido
+</div>
+
+<div class="facebook">
+Síguenos en Facebook: <br>
+<a href="https://www.facebook.com/" target="_blank">Página oficial</a>
+</div>
 
 <input type="text" id="nombre" placeholder="Tu nombre">
 
@@ -75,9 +109,12 @@ Total: $<span id="total">0</span>
 </div>
 
 <script>
+
 const BASE = 10;
 let quinielas = [];
 let totalGlobal = 0;
+
+const url = "https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec";
 
 const partidosDiv = document.getElementById("partidos");
 
@@ -167,8 +204,6 @@ function enviar(){
     fecha: new Date().toLocaleString("es-MX")
   };
 
-  const url="https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec";
-
   fetch(url,{
     method:"POST",
     mode:"no-cors",
@@ -189,6 +224,7 @@ function enviar(){
   document.getElementById("total").textContent=0;
   limpiar();
 }
+
 </script>
 
 </body>
