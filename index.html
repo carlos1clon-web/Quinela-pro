@@ -2,492 +2,80 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="format-detection" content="telephone=no">
   <title>Quiniela Liga MX</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin: 0;
-    }
-    .logo {
-      width: 120px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      background: white;
-      padding: 6px;
-      border-radius: 8px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .info {
-      background: #334155;
-      padding: 10px;
-      border-radius: 6px;
-      margin: 15px 0;
-    }
-    .partido {
-      background: #334155;
-      margin: 8px 0;
-      padding: 12px;
-      border-radius: 6px;
-    }
-    .opciones {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 8px;
-    }
-    button {
-      margin: 8px 4px;
-      padding: 12px 20px;
-      background: #22c55e;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #16a34a;
-    }
-    .resultados {
-      margin-top: 25px;
-      background: #020617;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
+    body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
+    .box { max-width:600px; margin:auto; padding:20px; background:#1e293b; border-radius:10px; }
+    input, button { padding:10px; margin:5px; width:90%; }
+    .match { margin:10px 0; padding:10px; background:#334155; border-radius:8px; }
+    label { margin-right:10px; }
   </style>
 </head>
+
 <body>
 
-  <div class="container">
-    <h1>Quiniela Liga MX</h1>
+<div class="box">
+  <h2>Quiniela Liga MX</h2>
 
-    <input type="text" id="nombre" placeholder="Tu nombre completo">
+  <input type="text" id="nombre" placeholder="Tu nombre">
 
-    <div id="partidos"></div>
+  <div id="partidos"></div>
 
-    <div class="info">
-      Dobles: <span id="dobles">0</span> • 
-      Triples: <span id="triples">0</span><br>
-      Costo quiniela actual: $<span id="totalActual">10</span><br>
-      <strong>Total a pagar: $<span id="total">0</span></strong>
+  <button onclick="enviar()">Enviar Quiniela</button>
+</div>
+
+<script>
+const partidos = [
+  "Partido 1",
+  "Partido 2",
+  "Partido 3",
+  "Partido 4",
+  "Partido 5"
+];
+
+const cont = document.getElementById("partidos");
+
+partidos.forEach((p, i) => {
+  cont.innerHTML += `
+    <div class="match">
+      <p>${p}</p>
+      <label><input type="checkbox" name="p${i}" value="1"> 1</label>
+      <label><input type="checkbox" name="p${i}" value="X"> X</label>
+      <label><input type="checkbox" name="p${i}" value="2"> 2</label>
     </div>
+  `;
+});
 
-    <button onclick="aleatorio()">🎲 Aleatorio</button>
-    <button onclick="limpiar()">🧹 Limpiar</button>
-    <button onclick="agregar()">➕ Agregar Quiniela</button>
-    <button onclick="enviar()">📲 Enviar a WhatsApp</button>
+function getPicks() {
+  let picks = [];
 
-    <div class="resultados">
-      <h3>Quinielas agregadas</h3>
-      <div id="lista"></div>
-    </div>
-  </div>
+  partidos.forEach((_, i) => {
+    let opciones = [];
+    document.querySelectorAll(`input[name="p${i}"]:checked`)
+      .forEach(el => opciones.push(el.value));
+    picks.push(opciones);
+  });
 
-  <script>
-    const BASE = 10;
-    let quinielas = [];
-    let totalGlobal = 0;
+  return picks;
+}
 
-    const partidosDiv = document.getElementById("partidos");
+function enviar() {
+  const nombre = document.getElementById("nombre").value;
+  const picks = getPicks();
 
-    for (let i = 1; i <= 9; i++) {
-      partidosDiv.innerHTML += `
-        <div class="partido">
-          <strong>Partido ${i}</strong>
-          <div class="opciones">
-            <label><input type="checkbox" value="L" name="p${i}" onchange="calcular()"> L</label>
-            <label><input type="checkbox" value="E" name="p${i}" onchange="calcular()"> E</label>
-            <label><input type="checkbox" value="V" name="p${i}" onchange="calcular()"> V</label>
-          </div>
-        </div>`;
-    }
+  fetch("TU_WEB_APP_URL", {
+    method: "POST",
+    body: JSON.stringify({ nombre, picks })
+  })
+  .then(r => r.json())
+  .then(res => {
+    alert("Quiniela enviada ✔");
+    console.log(res);
+  })
+  .catch(err => console.log(err));
+}
+</script>
 
-    function calcular() {
-      let dobles = 0;
-      let triples = 0;
-
-      for (let i = 1; i <= 9; i++) {
-        const checked = document.querySelectorAll(`input[name="p${i}"]:checked`).length;
-        if (checked === 2) dobles++;
-        if (checked === 3) triples++;
-      }
-
-      const costo = BASE * (2 ** dobles) * (3 ** triples);
-
-      document.getElementById("dobles").textContent = dobles;
-      document.getElementById("triples").textContent = triples;
-      document.getElementById("totalActual").textContent = costo;
-    }
-
-    function limpiar() {
-      document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-      calcular();
-    }
-
-    function aleatorio() {
-      limpiar();
-      for (let i = 1; i <= 9; i++) {
-        const checks = document.querySelectorAll(`input[name="p${i}"]`);
-        const r = Math.floor(Math.random() * 3);
-        checks[r].checked = true;
-      }
-      calcular();
-    }
-
-    function agregar() {
-      const nombre = document.getElementById("nombre").value.trim();
-      if (!nombre) {
-        alert("Por favor escribe tu nombre");
-        return;
-      }
-
-      const partidos = [];
-      for (let i = 1; i <= 9; i++) {
-        const picks = [];
-        document.querySelectorAll(`input[name="p${i}"]:checked`).forEach(c => picks.push(c.value));
-        if (picks.length === 0) {
-          alert(`Falta selección en el Partido ${i}`);
-          return;
-        }
-        partidos.push(picks);
-      }
-
-      function generarCombinaciones(arr, idx = 0) {
-        if (idx === arr.length) return [[]];
-        let res = [];
-        let sub = generarCombinaciones(arr, idx + 1);
-        arr[idx].forEach(op => {
-          sub.forEach(combo => res.push([op, ...combo]));
-        });
-        return res;
-      }
-
-      const combinaciones = generarCombinaciones(partidos);
-
-      combinaciones.forEach(combo => {
-        quinielas.push(combo);
-        document.getElementById("lista").innerHTML += `
-          <div>Quiniela ${quinielas.length}: ${combo.join(" - ")}</div>`;
-      });
-
-      totalGlobal += combinaciones.length * BASE;
-      document.getElementById("total").textContent = totalGlobal;
-
-      limpiar();
-    }
-
-    function enviar() {
-      const nombre = document.getElementById("nombre").value.trim();
-      if (!nombre || quinielas.length === 0) {
-        alert("Falta nombre o no has agregado quinielas");
-        return;
-      }
-
-      const datos = {
-        nombre: nombre,
-        quinielas: quinielas,
-        total: totalGlobal,
-        fecha: new Date().toLocaleString("es-MX", { timeZone: "America/Mexico_City" })
-      };
-
-      const url = "<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="format-detection" content="telephone=no">
-  <title>Quiniela Liga MX</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin: 0;
-    }
-    .logo {
-      width: 120px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      background: white;
-      padding: 6px;
-      border-radius: 8px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .info {
-      background: #334155;
-      padding: 10px;
-      border-radius: 6px;
-      margin: 15px 0;
-    }
-    .partido {
-      background: #334155;
-      margin: 8px 0;
-      padding: 12px;
-      border-radius: 6px;
-    }
-    .opciones {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 8px;
-    }
-    button {
-      margin: 8px 4px;
-      padding: 12px 20px;
-      background: #22c55e;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #16a34a;
-    }
-    .resultados {
-      margin-top: 25px;
-      background: #020617;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <h1>Quiniela Liga MX</h1>
-
-    <input type="text" id="nombre" placeholder="Tu nombre completo">
-
-    <div id="partidos"></div>
-
-    <div class="info">
-      Dobles: <span id="dobles">0</span> • 
-      Triples: <span id="triples">0</span><br>
-      Costo quiniela actual: $<span id="totalActual">10</span><br>
-      <strong>Total a pagar: $<span id="total">0</span></strong>
-    </div>
-
-    <button onclick="aleatorio()">🎲 Aleatorio</button>
-    <button onclick="limpiar()">🧹 Limpiar</button>
-    <button onclick="agregar()">➕ Agregar Quiniela</button>
-    <button onclick="enviar()">📲 Enviar a WhatsApp</button>
-
-    <div class="resultados">
-      <h3>Quinielas agregadas</h3>
-      <div id="lista"></div>
-    </div>
-  </div>
-
-  <script>
-    const BASE = 10;
-    let quinielas = [];
-    let totalGlobal = 0;
-
-    const partidosDiv = document.getElementById("partidos");
-
-    for (let i = 1; i <= 9; i++) {
-      partidosDiv.innerHTML += `
-        <div class="partido">
-          <strong>Partido ${i}</strong>
-          <div class="opciones">
-            <label><input type="checkbox" value="L" name="p${i}" onchange="calcular()"> L</label>
-            <label><input type="checkbox" value="E" name="p${i}" onchange="calcular()"> E</label>
-            <label><input type="checkbox" value="V" name="p${i}" onchange="calcular()"> V</label>
-          </div>
-        </div>`;
-    }
-
-    function calcular() {
-      let dobles = 0;
-      let triples = 0;
-
-      for (let i = 1; i <= 9; i++) {
-        const checked = document.querySelectorAll(`input[name="p${i}"]:checked`).length;
-        if (checked === 2) dobles++;
-        if (checked === 3) triples++;
-      }
-
-      const costo = BASE * (2 ** dobles) * (3 ** triples);
-
-      document.getElementById("dobles").textContent = dobles;
-      document.getElementById("triples").textContent = triples;
-      document.getElementById("totalActual").textContent = costo;
-    }
-
-    function limpiar() {
-      document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-      calcular();
-    }
-
-    function aleatorio() {
-      limpiar();
-      for (let i = 1; i <= 9; i++) {
-        const checks = document.querySelectorAll(`input[name="p${i}"]`);
-        const r = Math.floor(Math.random() * 3);
-        checks[r].checked = true;
-      }
-      calcular();
-    }
-
-    function agregar() {
-      const nombre = document.getElementById("nombre").value.trim();
-      if (!nombre) {
-        alert("Por favor escribe tu nombre");
-        return;
-      }
-
-      const partidos = [];
-      for (let i = 1; i <= 9; i++) {
-        const picks = [];
-        document.querySelectorAll(`input[name="p${i}"]:checked`).forEach(c => picks.push(c.value));
-        if (picks.length === 0) {
-          alert(`Falta selección en el Partido ${i}`);
-          return;
-        }
-        partidos.push(picks);
-      }
-
-      function generarCombinaciones(arr, idx = 0) {
-        if (idx === arr.length) return [[]];
-        let res = [];
-        let sub = generarCombinaciones(arr, idx + 1);
-        arr[idx].forEach(op => {
-          sub.forEach(combo => res.push([op, ...combo]));
-        });
-        return res;
-      }
-
-      const combinaciones = generarCombinaciones(partidos);
-
-      combinaciones.forEach(combo => {
-        quinielas.push(combo);
-        document.getElementById("lista").innerHTML += `
-          <div>Quiniela ${quinielas.length}: ${combo.join(" - ")}</div>`;
-      });
-
-      totalGlobal += combinaciones.length * BASE;
-      document.getElementById("total").textContent = totalGlobal;
-
-      limpiar();
-    }
-
-    function enviar() {
-      const nombre = document.getElementById("nombre").value.trim();
-      if (!nombre || quinielas.length === 0) {
-        alert("Falta nombre o no has agregado quinielas");
-        return;
-      }
-
-      const datos = {
-        nombre: nombre,
-        quinielas: quinielas,
-        total: totalGlobal,
-        fecha: new Date().toLocaleString("es-MX", { timeZone: "America/Mexico_City" })
-      };
-
-      const url = "https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec";
-
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify(datos)
-      })
-      .then(() => {
-        alert("¡Quiniela guardada en Google Sheets! ✓");
-      })
-      .catch(() => {
-        alert("Error al guardar");
-      });
-
-      let mensaje = `*Quiniela Liga MX*%0A`;
-      mensaje += `Nombre: ${nombre}%0A`;
-      mensaje += `Fecha: ${datos.fecha}%0A%0A`;
-
-      quinielas.forEach((q, i) => {
-        mensaje += `Quiniela ${i+1}: ${q.join(" - ")}%0A`;
-      });
-
-      mensaje += `%0ATotal a pagar: $${totalGlobal}`;
-
-      window.open("https://wa.me/525610791509?text=" + mensaje, "_blank");
-
-      quinielas = [];
-      totalGlobal = 0;
-      document.getElementById("lista").innerHTML = "";
-      document.getElementById("total").textContent = "0";
-      limpiar();
-    }
-  </script>
-</body>
-</html>";
-
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify(datos)
-      })
-      .then(() => {
-        alert("¡Quiniela guardada en Google Sheets! ✓");
-      })
-      .catch(() => {
-        alert("Error al guardar");
-      });
-
-      let mensaje = `*Quiniela Liga MX*%0A`;
-      mensaje += `Nombre: ${nombre}%0A`;
-      mensaje += `Fecha: ${datos.fecha}%0A%0A`;
-
-      quinielas.forEach((q, i) => {
-        mensaje += `Quiniela ${i+1}: ${q.join(" - ")}%0A`;
-      });
-
-      mensaje += `%0ATotal a pagar: $${totalGlobal}`;
-
-      window.open("https://wa.me/525610791509?text=" + mensaje, "_blank");
-
-      quinielas = [];
-      totalGlobal = 0;
-      document.getElementById("lista").innerHTML = "";
-      document.getElementById("total").textContent = "0";
-      limpiar();
-    }
-  </script>
 </body>
 </html>
