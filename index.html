@@ -57,6 +57,24 @@
       border-radius: 6px;
       border: none;
     }
+
+    .facebook {
+      margin-top: 10px;
+    }
+
+    .facebook a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .warning {
+      background: #991b1b;
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -65,6 +83,19 @@
 <div class="container">
 
   <h1>Quiniela Liga MX</h1>
+
+  <!-- ⏰ HORARIO DE CIERRE -->
+  <div class="warning">
+    ⚠️ Cierre de quiniela: 1 hora antes del primer partido
+  </div>
+
+  <!-- 🔗 FACEBOOK -->
+  <div class="facebook">
+    Síguenos en Facebook: <br>
+    <a href="https://www.facebook.com/" target="_blank">
+      👉 Página oficial
+    </a>
+  </div>
 
   <input type="text" id="nombre" placeholder="Tu nombre">
 
@@ -92,7 +123,6 @@ let totalGlobal = 0;
 
 const partidosDiv = document.getElementById("partidos");
 
-// crear 9 partidos
 for (let i = 1; i <= 9; i++) {
   partidosDiv.innerHTML += `
     <div class="partido">
