@@ -30,17 +30,22 @@ h1{
   margin:auto;
 }
 
-input, button{
+input{
   width:100%;
-  padding:10px;
-  margin:5px 0;
-  border-radius:8px;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
   border:none;
+  background:#e5e7eb;
 }
 
 button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:none;
   background:#38bdf8;
-  color:black;
   font-weight:bold;
 }
 
@@ -48,7 +53,7 @@ button{
   background:#1e293b;
   margin:10px 0;
   padding:10px;
-  border-radius:10px;
+  border-radius:12px;
 }
 
 .opciones button{
@@ -56,15 +61,22 @@ button{
   margin:2px;
 }
 
-.btn-facebook{
-  background:#1877f2;
-  color:white;
-  margin-top:10px;
+.seleccionado{
+  background:#22c55e !important;
 }
 
 .btn-whatsapp{
   background:#25D366;
   color:white;
+}
+
+.lista{
+  background:#020617;
+  margin-top:20px;
+  padding:10px;
+  border-radius:10px;
+  text-align:left;
+  font-size:14px;
 }
 </style>
 </head>
@@ -77,48 +89,35 @@ button{
 
 <div class="container">
 
-<!-- Jornada -->
-<input type="text" placeholder="Número de jornada">
+<input type="text" value="Jornada 10" disabled>
+<input type="text" value="$10 pesos por quiniela" disabled>
+<input type="text" value="Cierre: Viernes 20:00" disabled>
+<input type="text" value="+52 56 1079 1509" disabled>
 
-<!-- Precio -->
-<input type="text" placeholder="Precio de quiniela">
+<button onclick="abrirFacebook()">Grupo de Facebook</button>
 
-<!-- Cierre -->
-<input type="text" placeholder="Horario de cierre">
+<input type="text" id="total" placeholder="Total de quinielas" disabled>
+<input type="text" id="nombre" placeholder="Nombre del participante">
 
-<!-- Teléfono -->
-<input type="text" placeholder="Teléfono de informes">
-
-<!-- BOTÓN FACEBOOK CORREGIDO -->
-<button onclick="abrirFacebook()" class="btn-facebook">
-  Grupo de Facebook
-</button>
-
-<!-- Total quinielas -->
-<input type="text" placeholder="Total de quinielas">
-
-<!-- Nombre -->
-<input type="text" placeholder="Nombre del participante">
-
-<!-- Partidos -->
 <div id="partidos"></div>
 
-<!-- Botones -->
 <button onclick="agregarQuiniela()">Agregar Quiniela</button>
 <button onclick="limpiar()">Limpiar</button>
 <button onclick="aleatorio()">Llenado Aleatorio</button>
 
 <button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
 
+<div id="lista" class="lista"></div>
+
 </div>
 
 <script>
-// 🔵 ABRIR FACEBOOK (SOLUCIÓN DEFINITIVA)
+// FACEBOOK
 function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
 }
 
-// Crear 9 partidos
+// CREAR PARTIDOS
 const contenedor = document.getElementById("partidos");
 
 for(let i=1;i<=9;i++){
@@ -126,54 +125,77 @@ for(let i=1;i<=9;i++){
     <div class="partido">
       <p>Partido ${i}</p>
       <div class="opciones">
-        <button onclick="seleccionar(this)">L</button>
-        <button onclick="seleccionar(this)">E</button>
-        <button onclick="seleccionar(this)">V</button>
+        <button onclick="toggle(this)">L</button>
+        <button onclick="toggle(this)">E</button>
+        <button onclick="toggle(this)">V</button>
       </div>
     </div>
   `;
 }
 
-// Selección
-function seleccionar(btn){
-  let botones = btn.parentElement.querySelectorAll("button");
-  botones.forEach(b=>b.style.background="#38bdf8");
-  btn.style.background="#22c55e";
+// PERMITE DOBLES Y TRIPLES
+function toggle(btn){
+  btn.classList.toggle("seleccionado");
 }
 
-// Limpiar
+// GENERAR COMBINACIONES
+function generarCombinaciones(){
+  let partidos = [];
+
+  document.querySelectorAll(".opciones").forEach(op=>{
+    let seleccionados = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
+    if(seleccionados.length === 0) seleccionados = ["-"];
+    partidos.push(seleccionados);
+  });
+
+  // producto cartesiano
+  let resultado = [[]];
+
+  partidos.forEach(opciones=>{
+    let temp = [];
+    resultado.forEach(r=>{
+      opciones.forEach(o=>{
+        temp.push([...r, o]);
+      });
+    });
+    resultado = temp;
+  });
+
+  return resultado;
+}
+
+// AGREGAR QUINIELA
+function agregarQuiniela(){
+  let combinaciones = generarCombinaciones();
+  let lista = document.getElementById("lista");
+
+  lista.innerHTML = "";
+
+  combinaciones.forEach((c,i)=>{
+    lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
+  });
+
+  document.getElementById("total").value = combinaciones.length + " quinielas";
+}
+
+// LIMPIAR
 function limpiar(){
   location.reload();
 }
 
-// Aleatorio
+// ALEATORIO
 function aleatorio(){
   document.querySelectorAll(".opciones").forEach(op=>{
     let botones = op.querySelectorAll("button");
     let rand = Math.floor(Math.random()*3);
-    botones[rand].click();
+    botones[rand].classList.add("seleccionado");
   });
 }
 
-// WhatsApp
+// WHATSAPP
 function enviarWhats(){
-  let texto = "Mi quiniela:%0A";
-  let i = 1;
-
-  document.querySelectorAll(".partido").forEach(p=>{
-    let sel = p.querySelector(".opciones button[style*='34,197,94']");
-    if(sel){
-      texto += "Partido "+i+": "+sel.innerText+"%0A";
-    }
-    i++;
-  });
-
-  window.open(`https://wa.me/?text=${texto}`);
-}
-
-// Placeholder
-function agregarQuiniela(){
-  alert("Quiniela agregada (falta conectar a Sheets)");
+  let texto = document.getElementById("lista").innerText;
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`);
 }
 </script>
 
