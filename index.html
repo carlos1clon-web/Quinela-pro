@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quinielas Liga MX</title>
+<title>Quiniela Liga MX</title>
 
 <style>
 body{
@@ -11,268 +11,140 @@ body{
   background:#0f172a;
   color:white;
   margin:0;
+  padding:20px;
   text-align:center;
 }
 
-.header{
-  background:#1e293b;
-  padding:15px;
-}
-
-h1{
-  margin:0;
-  color:#38bdf8;
-}
-
 .container{
-  padding:20px;
   max-width:600px;
   margin:auto;
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+}
+
+h2{
+  margin-bottom:20px;
 }
 
 input{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:10px;
+  padding:10px;
+  width:95%;
+  margin-bottom:15px;
+  border-radius:8px;
   border:none;
-  background:#e5e7eb;
-}
-
-button{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:10px;
-  border:none;
-  background:#38bdf8;
-  font-weight:bold;
 }
 
 .partido{
-  background:#1e293b;
-  margin:10px 0;
-  padding:10px;
-  border-radius:12px;
-}
-
-.opciones button{
-  width:30%;
-  margin:2px;
-}
-
-.seleccionado{
-  background:#22c55e !important;
-}
-
-.btn-whatsapp{
-  background:#25D366;
-  color:white;
-}
-
-.lista{
-  background:#020617;
-  margin-top:20px;
-  padding:10px;
-  border-radius:10px;
+  margin:12px 0;
+  padding:12px;
+  background:#334155;
+  border-radius:8px;
   text-align:left;
-  font-size:14px;
+}
+
+.partido p{
+  margin:0 0 8px 0;
+  font-weight:bold;
+}
+
+label{
+  margin-right:10px;
+  cursor:pointer;
+}
+
+button{
+  margin-top:20px;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#22c55e;
+  color:white;
+  font-size:16px;
+}
+
+button:hover{
+  background:#16a34a;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>Quinielas Liga MX</h1>
-</div>
-
 <div class="container">
 
-<input type="text" value="Jornada 10" disabled>
-<input type="text" value="$10 pesos por quiniela" disabled>
-<input type="text" value="Cierre: Viernes 20:00" disabled>
-<input type="text" value="Informes al +52 55 7224 6040" disabled>
+<h2>Quiniela Liga MX</h2>
 
-<button onclick="abrirFacebook()">Grupo de Facebook</button>
+<input type="text" id="nombre" placeholder="Tu nombre">
 
-<input type="text" id="total" placeholder="Total de quinielas" disabled>
-<input type="text" id="nombre" placeholder="Nombre del participante">
+<!-- PARTIDO 1 -->
+<div class="partido">
+  <p>Equipo 1 vs Equipo 2</p>
+  <label><input type="radio" name="p1" value="Local"> Local</label>
+  <label><input type="radio" name="p1" value="Empate"> Empate</label>
+  <label><input type="radio" name="p1" value="Visitante"> Visitante</label>
+</div>
 
-<div id="partidos"></div>
+<!-- PARTIDO 2 -->
+<div class="partido">
+  <p>Equipo 3 vs Equipo 4</p>
+  <label><input type="radio" name="p2" value="Local"> Local</label>
+  <label><input type="radio" name="p2" value="Empate"> Empate</label>
+  <label><input type="radio" name="p2" value="Visitante"> Visitante</label>
+</div>
 
-<button onclick="agregarQuiniela()">Agregar Quiniela</button>
-<button onclick="limpiar()">Limpiar</button>
-<button onclick="aleatorio()">Llenado Aleatorio</button>
-
-<button onclick="enviarASheets()">Guardar Quiniela</button>
-
-<button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
-
-<div id="lista" class="lista"></div>
+<button onclick="enviarWhatsApp()">
+Enviar por WhatsApp
+</button>
 
 </div>
 
 <script>
 
-// 🔥 NUEVA URL YA ACTUALIZADA
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxJ7ulso9mbznF9azzWBIOhwsnqlrNX9flSVcXvzkQZGXUGC_z78UiPyC1HzitA-Ct-OA/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxJ7ulso9mbznF9azzWBIOhwsnqlrNX9flSVcXvzkQZGXUGC_z78UiPyC1HzitA-Ct-OA/exec"; // 👈 pega aquí tu URL
 
-// FACEBOOK
-function abrirFacebook(){
-  window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
-}
+function enviarWhatsApp(){
 
-// PARTIDOS
-const contenedor = document.getElementById("partidos");
+  const nombre = document.getElementById("nombre").value || "Sin nombre";
 
-for(let i=1;i<=9;i++){
-  contenedor.innerHTML += `
-    <div class="partido">
-      <p>Partido ${i}</p>
-      <div class="opciones">
-        <button onclick="toggle(this)">L</button>
-        <button onclick="toggle(this)">E</button>
-        <button onclick="toggle(this)">V</button>
-      </div>
-    </div>
-  `;
-}
-
-// TOGGLE
-function toggle(btn){
-  btn.classList.toggle("seleccionado");
-}
-
-// VALIDAR
-function quinielaCompleta(){
-  let ok = true;
-  document.querySelectorAll(".opciones").forEach(op=>{
-    if(op.querySelectorAll(".seleccionado").length === 0){
-      ok = false;
-    }
-  });
-  return ok;
-}
-
-// COMBINACIONES
-function generarCombinaciones(){
   let partidos = [];
 
-  document.querySelectorAll(".opciones").forEach(op=>{
-    let sel = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
-    partidos.push(sel);
+  document.querySelectorAll(".partido").forEach((p, i) => {
+    let seleccion = p.querySelector("input:checked")?.value || "Sin elegir";
+    partidos.push(`Partido ${i+1}: ${seleccion}`);
   });
 
-  let resultado = [[]];
+  const data = {
+    nombre: nombre,
+    quiniela: partidos.join(" | ")
+  };
 
-  partidos.forEach(opciones=>{
-    let temp = [];
-    resultado.forEach(r=>{
-      opciones.forEach(o=>{
-        temp.push([...r, o]);
-      });
-    });
-    resultado = temp;
-  });
-
-  return resultado;
-}
-
-// AGREGAR
-function agregarQuiniela(){
-
-  let nombre = document.getElementById("nombre").value.trim();
-
-  if(nombre === ""){
-    alert("Escribe tu nombre");
-    return;
-  }
-
-  if(!quinielaCompleta()){
-    alert("Selecciona todos los partidos");
-    return;
-  }
-
-  let combinaciones = generarCombinaciones();
-  let lista = document.getElementById("lista");
-
-  lista.innerHTML = "";
-
-  combinaciones.forEach((c,i)=>{
-    lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
-  });
-
-  document.getElementById("total").value = combinaciones.length + " quinielas";
-}
-
-// LIMPIAR
-function limpiar(){
-  location.reload();
-}
-
-// ALEATORIO
-function aleatorio(){
-  document.querySelectorAll(".opciones").forEach(op=>{
-    let botones = op.querySelectorAll("button");
-    botones.forEach(b => b.classList.remove("seleccionado"));
-
-    let rand = Math.floor(Math.random()*3);
-    botones[rand].classList.add("seleccionado");
-  });
-}
-
-// 🔥 ENVIAR A SHEETS (YA FUNCIONANDO)
-function enviarASheets(){
-
-  let nombre = document.getElementById("nombre").value.trim();
-
-  if(nombre === ""){
-    alert("Escribe tu nombre");
-    return;
-  }
-
-  if(!quinielaCompleta()){
-    alert("Completa todos los partidos");
-    return;
-  }
-
-  let combinaciones = generarCombinaciones();
-
-  fetch(URL_SCRIPT, {
+  // 1. GUARDAR EN SHEETS
+  fetch(scriptURL, {
     method: "POST",
-    body: JSON.stringify({
-      nombre: nombre,
-      quinielas: combinaciones
-    })
+    body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(res => {
-    alert("✅ Quiniela guardada en Sheets");
+  .then(() => {
+
+    // 2. ABRIR WHATSAPP
+    const mensaje =
+`🎯 Quiniela Liga MX
+👤 ${nombre}
+
+` + partidos.join("\n");
+
+    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, "_blank");
+
   })
   .catch(err => {
+    alert("Error al guardar en Google Sheets");
     console.error(err);
-    alert("❌ Error al guardar");
   });
-}
 
-// WHATSAPP
-function enviarWhats(){
-  let nombre = document.getElementById("nombre").value.trim();
-  let lista = document.getElementById("lista").innerText;
-  let total = document.getElementById("total").value;
-
-  if(nombre === "" || lista === ""){
-    alert("Completa la quiniela");
-    return;
-  }
-
-  let cantidad = parseInt(total);
-  let pago = cantidad * 10;
-
-  let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n${lista}\n\n📊 ${cantidad} quinielas\n💰 $${pago} MXN`;
-
-  window.open(`https://wa.me/525610791509?text=${encodeURIComponent(mensaje)}`);
 }
 
 </script>
