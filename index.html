@@ -104,6 +104,7 @@ button{
 <button onclick="agregarQuiniela()">Agregar Quiniela</button>
 <button onclick="limpiar()">Limpiar</button>
 <button onclick="aleatorio()">Llenado Aleatorio</button>
+<button onclick="enviarASheets()">Guardar Quiniela</button>
 
 <button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
 
@@ -112,6 +113,7 @@ button{
 </div>
 
 <script>
+
 // FACEBOOK
 function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
@@ -138,7 +140,7 @@ function toggle(btn){
   btn.classList.toggle("seleccionado");
 }
 
-// VALIDAR COMPLETA
+// VALIDAR
 function quinielaCompleta(){
   let completa = true;
 
@@ -181,7 +183,7 @@ function agregarQuiniela(){
   let nombre = document.getElementById("nombre").value.trim();
 
   if(nombre === ""){
-    alert("Debes ingresar el nombre del participante");
+    alert("Debes ingresar el nombre");
     return;
   }
 
@@ -207,12 +209,51 @@ function limpiar(){
   location.reload();
 }
 
-// ALEATORIO
+// ALEATORIO (CORREGIDO)
 function aleatorio(){
   document.querySelectorAll(".opciones").forEach(op=>{
     let botones = op.querySelectorAll("button");
+
+    botones.forEach(b => b.classList.remove("seleccionado"));
+
     let rand = Math.floor(Math.random()*3);
     botones[rand].classList.add("seleccionado");
+  });
+}
+
+// ENVIAR A SHEETS
+function enviarASheets(){
+
+  let nombre = document.getElementById("nombre").value.trim();
+
+  if(nombre === ""){
+    alert("Debes ingresar el nombre");
+    return;
+  }
+
+  if(!quinielaCompleta()){
+    alert("Debes completar todos los partidos");
+    return;
+  }
+
+  let combinaciones = generarCombinaciones();
+
+  let data = {
+    nombre: nombre,
+    quinielas: combinaciones
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(res => {
+    alert("✅ Guardado en Google Sheets");
+  })
+  .catch(err => {
+    alert("❌ Error al guardar");
+    console.error(err);
   });
 }
 
@@ -223,12 +264,12 @@ function enviarWhats(){
   let total = document.getElementById("total").value;
 
   if(nombre === ""){
-    alert("Debes ingresar el nombre antes de enviar");
+    alert("Debes ingresar el nombre");
     return;
   }
 
   if(lista === ""){
-    alert("Primero debes agregar una quiniela");
+    alert("Primero agrega la quiniela");
     return;
   }
 
@@ -236,15 +277,16 @@ function enviarWhats(){
   let pago = cantidad * 10;
 
   let mensaje = `📊 Quiniela Liga MX\n\n`;
-  mensaje += `👤 Participante: ${nombre}\n\n`;
-  mensaje += `📋 Selecciones:\n${lista}\n\n`;
-  mensaje += `📊 Total: ${cantidad} quinielas\n`;
-  mensaje += `💰 Total a pagar: $${pago} MXN`;
+  mensaje += `👤 ${nombre}\n\n`;
+  mensaje += `${lista}\n\n`;
+  mensaje += `📊 Total: ${cantidad}\n`;
+  mensaje += `💰 $${pago} MXN`;
 
   let numero = "525610791509";
 
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 }
+
 </script>
 
 </body>
