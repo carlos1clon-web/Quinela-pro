@@ -92,7 +92,7 @@ button{
 <input type="text" value="Jornada 10" disabled>
 <input type="text" value="$10 pesos por quiniela" disabled>
 <input type="text" value="Cierre: Viernes 20:00" disabled>
-<input type="text" value="Informes al +52 56 1079 1509" disabled>
+<input type="text" value="Informes al +52 55 7224 6040" disabled>
 
 <button onclick="abrirFacebook()">Grupo de Facebook</button>
 
@@ -133,12 +133,12 @@ for(let i=1;i<=9;i++){
   `;
 }
 
-// TOGGLE (permite dobles y triples)
+// TOGGLE
 function toggle(btn){
   btn.classList.toggle("seleccionado");
 }
 
-// VALIDAR SI ESTA COMPLETA
+// VALIDAR COMPLETA
 function quinielaCompleta(){
   let completa = true;
 
@@ -218,8 +218,32 @@ function aleatorio(){
 
 // WHATSAPP
 function enviarWhats(){
-  let texto = document.getElementById("lista").innerText;
-  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`);
+  let nombre = document.getElementById("nombre").value.trim();
+  let lista = document.getElementById("lista").innerText;
+  let total = document.getElementById("total").value;
+
+  if(nombre === ""){
+    alert("Debes ingresar el nombre antes de enviar");
+    return;
+  }
+
+  if(lista === ""){
+    alert("Primero debes agregar una quiniela");
+    return;
+  }
+
+  let cantidad = parseInt(total);
+  let pago = cantidad * 10;
+
+  let mensaje = `📊 Quiniela Liga MX\n\n`;
+  mensaje += `👤 Participante: ${nombre}\n\n`;
+  mensaje += `📋 Selecciones:\n${lista}\n\n`;
+  mensaje += `📊 Total: ${cantidad} quinielas\n`;
+  mensaje += `💰 Total a pagar: $${pago} MXN`;
+
+  let numero = "525610791509";
+
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 }
 </script>
 
