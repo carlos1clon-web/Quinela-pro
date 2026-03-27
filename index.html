@@ -243,10 +243,10 @@ function enviarASheets(){
     quinielas: combinaciones
   };
 
-  fetch("", {https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec
-    method: "POST",
-    body: JSON.stringify(data)
-  })
+  fetch("https://script.google.com/macros/s/AKfycbz3amuSwCn6Oquu_BDXYE36AoLZDfneJtmPWPy8ex2sYym5IhMisNTM-CZQ9yy4jebw1Q/exec", {
+  method: "POST",
+  body: JSON.stringify(data)
+})
   .then(res => res.json())
   .then(res => {
     alert("✅ Guardado en Google Sheets");
