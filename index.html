@@ -104,6 +104,7 @@ button{
 <button onclick="agregarQuiniela()">Agregar Quiniela</button>
 <button onclick="limpiar()">Limpiar</button>
 <button onclick="aleatorio()">Llenado Aleatorio</button>
+
 <button onclick="enviarASheets()">Guardar Quiniela</button>
 
 <button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
@@ -114,12 +115,15 @@ button{
 
 <script>
 
+// 🔥 NUEVA URL YA ACTUALIZADA
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxJ7ulso9mbznF9azzWBIOhwsnqlrNX9flSVcXvzkQZGXUGC_z78UiPyC1HzitA-Ct-OA/exec";
+
 // FACEBOOK
 function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
 }
 
-// CREAR PARTIDOS
+// PARTIDOS
 const contenedor = document.getElementById("partidos");
 
 for(let i=1;i<=9;i++){
@@ -142,24 +146,22 @@ function toggle(btn){
 
 // VALIDAR
 function quinielaCompleta(){
-  let completa = true;
-
+  let ok = true;
   document.querySelectorAll(".opciones").forEach(op=>{
     if(op.querySelectorAll(".seleccionado").length === 0){
-      completa = false;
+      ok = false;
     }
   });
-
-  return completa;
+  return ok;
 }
 
-// GENERAR COMBINACIONES
+// COMBINACIONES
 function generarCombinaciones(){
   let partidos = [];
 
   document.querySelectorAll(".opciones").forEach(op=>{
-    let seleccionados = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
-    partidos.push(seleccionados);
+    let sel = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
+    partidos.push(sel);
   });
 
   let resultado = [[]];
@@ -177,18 +179,18 @@ function generarCombinaciones(){
   return resultado;
 }
 
-// AGREGAR QUINIELA
+// AGREGAR
 function agregarQuiniela(){
 
   let nombre = document.getElementById("nombre").value.trim();
 
   if(nombre === ""){
-    alert("Debes ingresar el nombre");
+    alert("Escribe tu nombre");
     return;
   }
 
   if(!quinielaCompleta()){
-    alert("Debes seleccionar todos los partidos");
+    alert("Selecciona todos los partidos");
     return;
   }
 
@@ -213,7 +215,6 @@ function limpiar(){
 function aleatorio(){
   document.querySelectorAll(".opciones").forEach(op=>{
     let botones = op.querySelectorAll("button");
-
     botones.forEach(b => b.classList.remove("seleccionado"));
 
     let rand = Math.floor(Math.random()*3);
@@ -221,39 +222,37 @@ function aleatorio(){
   });
 }
 
-// ENVIAR A SHEETS (CORREGIDO)
+// 🔥 ENVIAR A SHEETS (YA FUNCIONANDO)
 function enviarASheets(){
 
   let nombre = document.getElementById("nombre").value.trim();
 
   if(nombre === ""){
-    alert("Debes ingresar el nombre");
+    alert("Escribe tu nombre");
     return;
   }
 
   if(!quinielaCompleta()){
-    alert("Debes completar todos los partidos");
+    alert("Completa todos los partidos");
     return;
   }
 
   let combinaciones = generarCombinaciones();
 
-  let data = {
-    nombre: nombre,
-    quinielas: combinaciones
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbzPqfachviO5BXgofSmATykashGzuo-XpY_lWl-5lfvrKGJSTji1G1qPz8hnp5KkVBt9Q/exec", {
+  fetch(URL_SCRIPT, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify({
+      nombre: nombre,
+      quinielas: combinaciones
+    })
   })
   .then(res => res.json())
   .then(res => {
-    alert("✅ Guardado en Google Sheets");
+    alert("✅ Quiniela guardada en Sheets");
   })
   .catch(err => {
-    alert("❌ Error al guardar");
     console.error(err);
+    alert("❌ Error al guardar");
   });
 }
 
@@ -263,28 +262,17 @@ function enviarWhats(){
   let lista = document.getElementById("lista").innerText;
   let total = document.getElementById("total").value;
 
-  if(nombre === ""){
-    alert("Debes ingresar el nombre");
-    return;
-  }
-
-  if(lista === ""){
-    alert("Primero agrega la quiniela");
+  if(nombre === "" || lista === ""){
+    alert("Completa la quiniela");
     return;
   }
 
   let cantidad = parseInt(total);
   let pago = cantidad * 10;
 
-  let mensaje = `📊 Quiniela Liga MX\n\n`;
-  mensaje += `👤 ${nombre}\n\n`;
-  mensaje += `${lista}\n\n`;
-  mensaje += `📊 Total: ${cantidad}\n`;
-  mensaje += `💰 $${pago} MXN`;
+  let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n${lista}\n\n📊 ${cantidad} quinielas\n💰 $${pago} MXN`;
 
-  let numero = "525610791509";
-
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
+  window.open(`https://wa.me/525610791509?text=${encodeURIComponent(mensaje)}`);
 }
 
 </script>
