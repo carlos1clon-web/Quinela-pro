@@ -209,7 +209,7 @@ function limpiar(){
   location.reload();
 }
 
-// ALEATORIO (CORREGIDO)
+// ALEATORIO
 function aleatorio(){
   document.querySelectorAll(".opciones").forEach(op=>{
     let botones = op.querySelectorAll("button");
@@ -221,6 +221,7 @@ function aleatorio(){
   });
 }
 
+// ENVIAR A SHEETS (CORREGIDO)
 function enviarASheets(){
 
   let nombre = document.getElementById("nombre").value.trim();
@@ -255,6 +256,7 @@ function enviarASheets(){
     console.error(err);
   });
 }
+
 // WHATSAPP
 function enviarWhats(){
   let nombre = document.getElementById("nombre").value.trim();
