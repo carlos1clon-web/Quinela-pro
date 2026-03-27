@@ -57,12 +57,8 @@ button{
 }
 
 .btn-facebook{
-  display:inline-block;
   background:#1877f2;
   color:white;
-  padding:12px;
-  border-radius:8px;
-  text-decoration:none;
   margin-top:10px;
 }
 
@@ -70,7 +66,6 @@ button{
   background:#25D366;
   color:white;
 }
-
 </style>
 </head>
 
@@ -94,10 +89,10 @@ button{
 <!-- Teléfono -->
 <input type="text" placeholder="Teléfono de informes">
 
-<!-- Facebook -->
-<a href="https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr" target="_blank" class="btn-facebook">
+<!-- BOTÓN FACEBOOK CORREGIDO -->
+<button onclick="abrirFacebook()" class="btn-facebook">
   Grupo de Facebook
-</a>
+</button>
 
 <!-- Total quinielas -->
 <input type="text" placeholder="Total de quinielas">
@@ -118,6 +113,11 @@ button{
 </div>
 
 <script>
+// 🔵 ABRIR FACEBOOK (SOLUCIÓN DEFINITIVA)
+function abrirFacebook(){
+  window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
+}
+
 // Crear 9 partidos
 const contenedor = document.getElementById("partidos");
 
@@ -171,7 +171,7 @@ function enviarWhats(){
   window.open(`https://wa.me/?text=${texto}`);
 }
 
-// Placeholder (luego conectamos con Sheets)
+// Placeholder
 function agregarQuiniela(){
   alert("Quiniela agregada (falta conectar a Sheets)");
 }
