@@ -46,7 +46,6 @@ button{
 }
 
 .opciones button{width:30%;margin:2px;}
-
 .seleccionado{background:#22c55e !important;}
 
 .btn-whatsapp{background:#25D366;color:white;}
@@ -100,6 +99,7 @@ function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
 }
 
+// GENERAR PARTIDOS
 const contenedor = document.getElementById("partidos");
 
 for(let i=1;i<=9;i++){
@@ -119,6 +119,7 @@ function toggle(btn){
   btn.classList.toggle("seleccionado");
 }
 
+// GENERAR COMBINACIONES
 function generarCombinaciones(){
   let partidos = [];
 
@@ -142,6 +143,7 @@ function generarCombinaciones(){
   return resultado;
 }
 
+// AGREGAR QUINIELA
 function agregarQuiniela(){
   let combinaciones = generarCombinaciones();
   let lista = document.getElementById("lista");
@@ -155,6 +157,7 @@ function agregarQuiniela(){
   document.getElementById("total").value = combinaciones.length;
 }
 
+// ALEATORIO
 function aleatorio(){
   document.querySelectorAll(".opciones").forEach(op=>{
     let botones = op.querySelectorAll("button");
@@ -164,23 +167,20 @@ function aleatorio(){
   });
 }
 
+// LIMPIAR
 function limpiar(){
   location.reload();
 }
 
-async function enviarWhats(){
+// 🚀 ENVÍO FINAL CORREGIDO
+function enviarWhats(){
 
   let nombre = document.getElementById("nombre").value.trim();
   let lista = document.getElementById("lista").innerText || "";
   let total = document.getElementById("total").value || 0;
 
-  if(nombre === ""){
-    alert("Debes ingresar el nombre");
-    return;
-  }
-
-  if(lista === ""){
-    alert("Agrega una quiniela primero");
+  if(nombre === "" || lista === ""){
+    alert("Completa nombre y quiniela");
     return;
   }
 
@@ -188,42 +188,36 @@ async function enviarWhats(){
 
   let mensaje = `📊 Quiniela Liga MX\n\n👤 Participante: ${nombre}\n\n📋 Selecciones:\n${lista}\n\n📊 Total: ${total} quinielas\n💰 Total a pagar: $${total * 10} MXN`;
 
-  try {
-    const res = await fetch(URL_SCRIPT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        nombre: nombre,
-        quiniela: combinaciones
-      })
-    });
+  // 1. WHATSAPP INMEDIATO
+  let numero = "525610791509";
+  window.open(
+    `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`,
+    "_blank"
+  );
 
-    const text = await res.text();
-    console.log("RESPUESTA SHEETS:", text);
+  // 2. SHEETS EN BACKGROUND
+  fetch(URL_SCRIPT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nombre: nombre,
+      quiniela: combinaciones
+    })
+  })
+  .then(r => r.text())
+  .then(res => console.log("Sheets:", res))
+  .catch(err => console.error("Sheets error:", err));
 
-    if(text !== "OK" && text !== "OK_GUARDADO"){
-      alert("Error al enviar a Sheets: " + text);
-      return;
-    }
+  // 3. LIMPIEZA
+  document.querySelectorAll(".seleccionado").forEach(btn=>{
+    btn.classList.remove("seleccionado");
+  });
 
-    // LIMPIAR SOLO SI FUNCIONÓ
-    document.querySelectorAll(".seleccionado").forEach(btn=>{
-      btn.classList.remove("seleccionado");
-    });
-
-    document.getElementById("lista").innerHTML = "";
-    document.getElementById("total").value = "";
-    document.getElementById("nombre").value = "";
-
-    let numero = "525610791509";
-    window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
-
-  } catch (err) {
-    alert("Error de conexión con Sheets");
-    console.error(err);
-  }
+  document.getElementById("lista").innerHTML = "";
+  document.getElementById("total").value = "";
+  document.getElementById("nombre").value = "";
 }
 
 </script>
