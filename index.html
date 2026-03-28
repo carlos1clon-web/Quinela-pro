@@ -113,7 +113,7 @@ button{
 
 <script>
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz4e1jm5JnKpFvCvRjI4Ss1UDi42TlqtaE2lBUOwQxpVHf_rnGyAdKBNzCxQX6X616mTw/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxJ7ulso9mbznF9azzWBIOhwsnqlrNX9flSVcXvzkQZGXUGC_z78UiPyC1HzitA-Ct-OA/exec";
 
 function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
@@ -172,18 +172,6 @@ function generarCombinaciones(){
 }
 
 function agregarQuiniela(){
-
-  let nombre = document.getElementById("nombre").value.trim();
-
-  if(nombre === ""){
-    alert("Debes ingresar el nombre");
-    return;
-  }
-
-  if(!quinielaCompleta()){
-    alert("Selecciona todos los partidos");
-    return;
-  }
 
   let combinaciones = generarCombinaciones();
   let lista = document.getElementById("lista");
@@ -244,9 +232,17 @@ function enviarWhats(){
     })
   });
 
+  // LIMPIAR TODO DESPUÉS DE ENVIAR
+  document.querySelectorAll(".seleccionado").forEach(btn=>{
+    btn.classList.remove("seleccionado");
+  });
+
+  document.getElementById("lista").innerHTML = "";
+  document.getElementById("total").value = "";
+  document.getElementById("nombre").value = "";
+
   let numero = "525610791509";
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
-
 }
 
 </script>
