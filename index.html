@@ -82,8 +82,8 @@ button{
 
 #status{
   margin-top:10px;
-  font-size:14px;
   color:#38bdf8;
+  font-size:14px;
 }
 </style>
 </head>
@@ -112,7 +112,7 @@ button{
 <button onclick="limpiar()">Limpiar</button>
 <button onclick="aleatorio()">Llenado Aleatorio</button>
 
-<button class="btn-whatsapp" onclick="enviarWhats()" id="btnEnviar">
+<button class="btn-whatsapp" onclick="enviarWhats()">
 Enviar por WhatsApp
 </button>
 
@@ -131,7 +131,7 @@ function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
 }
 
-// CREAR PARTIDOS
+// PARTIDOS
 const contenedor = document.getElementById("partidos");
 
 for(let i=1;i<=9;i++){
@@ -163,7 +163,7 @@ function quinielaCompleta(){
   return ok;
 }
 
-// GENERAR COMBINACIONES
+// GENERAR
 function generarCombinaciones(){
   let partidos = [];
 
@@ -203,12 +203,10 @@ function agregarQuiniela(){
   }
 
   let combinaciones = generarCombinaciones();
-  let lista = document.getElementById("lista");
-
-  lista.innerHTML = "";
+  document.getElementById("lista").innerHTML = "";
 
   combinaciones.forEach((c,i)=>{
-    lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
+    document.getElementById("lista").innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
   });
 
   document.getElementById("total").value = combinaciones.length + " quinielas";
@@ -233,7 +231,6 @@ function aleatorio(){
 // ENVIAR
 async function enviarWhats(){
 
-  let btn = document.getElementById("btnEnviar");
   let status = document.getElementById("status");
 
   let nombre = document.getElementById("nombre").value.trim();
@@ -246,26 +243,17 @@ async function enviarWhats(){
   }
 
   if(lista === ""){
-    alert("Primero agrega una quiniela");
+    alert("Agrega una quiniela primero");
     return;
   }
 
-  btn.disabled = true;
-  status.innerText = "Enviando a Google Sheets... ⏳";
-
-  let cantidad = parseInt(total) || 0;
-  let pago = cantidad * 10;
-
-  let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n📋 ${lista}\n\n📊 Total: ${cantidad}\n💰 Pago: $${pago} MXN`;
+  status.innerText = "Enviando a Sheets... ⏳";
 
   let combinaciones = generarCombinaciones();
 
-  try{
+  try {
     const res = await fetch(URL_SCRIPT, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
       body: JSON.stringify({
         nombre: nombre,
         quiniela: combinaciones
@@ -277,15 +265,16 @@ async function enviarWhats(){
 
     status.innerText = "Enviado correctamente ✅";
 
-  }catch(err){
+  } catch (err) {
     console.error(err);
     status.innerText = "Error al enviar ❌";
   }
 
-  btn.disabled = false;
+  let pago = (parseInt(total) || 0) * 10;
 
-  let numero = "525610791509";
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
+  let mensaje = `📊 Quiniela Liga MX\n👤 ${nombre}\n📋 ${lista}\n💰 Pago: $${pago}`;
+
+  window.open(`https://wa.me/525610791509?text=${encodeURIComponent(mensaje)}`);
 }
 
 </script>
