@@ -47,7 +47,6 @@ button{
   border:none;
   background:#38bdf8;
   font-weight:bold;
-  cursor:pointer;
 }
 
 .partido{
@@ -79,12 +78,6 @@ button{
   text-align:left;
   font-size:14px;
 }
-
-#status{
-  margin-top:10px;
-  color:#38bdf8;
-  font-size:14px;
-}
 </style>
 </head>
 
@@ -99,22 +92,20 @@ button{
 <input type="text" value="Jornada 10" disabled>
 <input type="text" value="$10 pesos por quiniela" disabled>
 <input type="text" value="Cierre: Viernes 20:00" disabled>
+<input type="text" value="Informes al +52 55 7224 6040" disabled>
 
 <button onclick="abrirFacebook()">Grupo de Facebook</button>
 
+<input type="text" id="total" placeholder="Total de quinielas" disabled>
 <input type="text" id="nombre" placeholder="Nombre del participante">
 
 <div id="partidos"></div>
 
-<button onclick="agregarQuiniela()">Ver Quiniela</button>
+<button onclick="agregarQuiniela()">Agregar Quiniela</button>
 <button onclick="limpiar()">Limpiar</button>
 <button onclick="aleatorio()">Llenado Aleatorio</button>
 
-<button class="btn-whatsapp" onclick="enviarWhats()">
-Enviar
-</button>
-
-<div id="status"></div>
+<button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
 
 <div id="lista" class="lista"></div>
 
@@ -145,10 +136,12 @@ for(let i=1;i<=9;i++){
   `;
 }
 
+// TOGGLE
 function toggle(btn){
   btn.classList.toggle("seleccionado");
 }
 
+// VALIDAR
 function quinielaCompleta(){
   let ok = true;
   document.querySelectorAll(".opciones").forEach(op=>{
@@ -159,6 +152,7 @@ function quinielaCompleta(){
   return ok;
 }
 
+// GENERAR
 function generarCombinaciones(){
   let partidos = [];
 
@@ -182,13 +176,13 @@ function generarCombinaciones(){
   return resultado;
 }
 
-// MOSTRAR SOLO (NO ENVÍA)
+// AGREGAR
 function agregarQuiniela(){
 
   let nombre = document.getElementById("nombre").value.trim();
 
   if(nombre === ""){
-    alert("Ingresa nombre");
+    alert("Debes ingresar el nombre");
     return;
   }
 
@@ -198,14 +192,15 @@ function agregarQuiniela(){
   }
 
   let combinaciones = generarCombinaciones();
-
   let lista = document.getElementById("lista");
+
   lista.innerHTML = "";
 
   combinaciones.forEach((c,i)=>{
     lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
   });
 
+  document.getElementById("total").value = combinaciones.length + " quinielas";
 }
 
 // LIMPIAR
@@ -218,43 +213,59 @@ function aleatorio(){
   document.querySelectorAll(".opciones").forEach(op=>{
     let botones = op.querySelectorAll("button");
     botones.forEach(b => b.classList.remove("seleccionado"));
-    botones[Math.floor(Math.random()*3)].classList.add("seleccionado");
+
+    let rand = Math.floor(Math.random()*3);
+    botones[rand].classList.add("seleccionado");
   });
 }
 
-// ENVIAR (SEPARADO: NADA BLOQUEA WHATSAPP)
+// WHATSAPP + SHEETS
 function enviarWhats(){
 
   let nombre = document.getElementById("nombre").value.trim();
   let lista = document.getElementById("lista").innerText;
+  let total = document.getElementById("total").value;
 
   if(nombre === ""){
-    alert("Falta nombre");
+    alert("Debes ingresar el nombre antes de enviar");
     return;
   }
 
   if(lista === ""){
-    alert("Primero genera quiniela");
+    alert("Primero debes agregar una quiniela");
     return;
   }
 
-  let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n📋 ${lista}`;
+  let cantidad = parseInt(total) || 0;
+  let pago = cantidad * 10;
 
-  // 🔥 WHATSAPP SIEMPRE FUNCIONA
-  window.open(`https://wa.me/525610791509?text=${encodeURIComponent(mensaje)}`, "_blank");
+  let mensaje = `📊 Quiniela Liga MX\n\n👤 Participante: ${nombre}\n\n📋 Selecciones:\n${lista}\n\n📊 Total: ${cantidad} quinielas\n💰 Total a pagar: $${pago} MXN`;
 
-  // 🔥 SHEETS (NO BLOQUEA)
+  let combinaciones = generarCombinaciones();
+
+  // 🔥 ENVÍO CORRECTO A SHEETS
   fetch(URL_SCRIPT, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       nombre: nombre,
-      quiniela: generarCombinaciones()
+      quiniela: combinaciones
     })
   })
   .then(r => r.text())
-  .then(r => console.log("SHEETS:", r))
-  .catch(err => console.log("ERROR SHEETS:", err));
+  .then(res => {
+    console.log("RESPUESTA SHEETS:", res);
+  })
+  .catch(err => {
+    console.error("ERROR SHEETS:", err);
+    alert("Error enviando a Sheets");
+  });
 
+  // WHATSAPP
+  let numero = "525610791509";
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 }
 
 </script>
