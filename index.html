@@ -1,110 +1,210 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiniela PRO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiniela PRO v5.0</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
 
-<style>
-body{
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-  text-align:center;
-  padding:20px;
-}
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
 
-.container{
-  max-width:500px;
-  margin:auto;
-  background:#1e293b;
-  padding:20px;
-  border-radius:10px;
-}
+        h2 {
+            margin-top: 0;
+            color: #22c55e;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-input, select, button{
-  width:100%;
-  padding:10px;
-  margin:5px 0;
-  border-radius:5px;
-  border:none;
-}
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
 
-button{
-  background:#22c55e;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #94a3b8;
+        }
 
-button:hover{
-  background:#16a34a;
-}
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
 
-h2{
-  margin-bottom:10px;
-}
-</style>
+        select {
+            cursor: pointer;
+            border-left: 4px solid #22c55e;
+        }
+
+        button {
+            background: #22c55e;
+            border: none;
+            color: #0f172a;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        #msg {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+
+        .partido-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #334155;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        .partido-row span {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .partido-row select {
+            width: 60%;
+            margin: 0;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <h2>🔥 Quiniela PRO</h2>
+    <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">LIGA MX - CLAUSURA 2026</p>
 
-  <h2>🔥 Quiniela PRO</h2>
+    <div class="input-group">
+        <label>Nombre del Participante:</label>
+        <input type="text" id="nombre" placeholder="Ej. Juan Pérez" autocomplete="off">
+    </div>
 
-  <input type="text" id="nombre" placeholder="Tu nombre">
+    <div id="partidos">
+        </div>
 
-  <div id="partidos"></div>
+    <button id="btnEnviar" onclick="enviar()">ENVIAR PRONÓSTICOS</button>
 
-  <button onclick="enviar()">Enviar Quiniela</button>
-
-  <p id="msg"></p>
-
+    <div id="msg"></div>
 </div>
 
 <script>
-// 🔥 URL de tu Apps Script 
-const API_URL = "https://script.google.com/macros/s/AKfycbz4e1jm5JnKpFvCvRjI4Ss1UDi42TlqtaE2lBUOwQxpVHf_rnGyAdKBNzCxQX6X616mTw/exec";
+    // 1. PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
+    const API_URL = "https://script.google.com/macros/s/AKfycbz4e1jm5JnKpFvCvRjI4Ss1UDi42TlqtaE2lBUOwQxpVHf_rnGyAdKBNzCxQX6X616mTw/exec";
 
-const partidosDiv = document.getElementById("partidos");
+    const partidosDiv = document.getElementById("partidos");
 
-// crear 9 partidos
-for(let i=1;i<=9;i++){
-  partidosDiv.innerHTML += `
-    <select id="p${i}">
-      <option value="">Partido ${i}</option>
-      <option value="1">Local</option>
-      <option value="X">Empate</option>
-      <option value="2">Visitante</option>
-    </select>
-  `;
-}
+    // Generar los 9 selects dinámicamente
+    for(let i=1; i<=9; i++) {
+        partidosDiv.innerHTML += `
+            <div class="partido-row">
+                <span>Partido ${i}</span>
+                <select id="p${i}">
+                    <option value="">Seleccionar...</option>
+                    <option value="1">Local (1)</option>
+                    <option value="X">Empate (X)</option>
+                    <option value="2">Visitante (2)</option>
+                </select>
+            </div>
+        `;
+    }
 
-async function enviar(){
-  const nombre = document.getElementById("nombre").value;
+    async function enviar() {
+        const nombre = document.getElementById("nombre").value.trim();
+        const msg = document.getElementById("msg");
+        const btn = document.getElementById("btnEnviar");
 
-  let quiniela = [];
+        // Validación de nombre
+        if (!nombre) {
+            alert("Por favor, ingresa tu nombre.");
+            return;
+        }
 
-  for(let i=1;i<=9;i++){
-    quiniela.push(document.getElementById("p"+i).value);
-  }
+        // Recolectar picks
+        let picks = [];
+        for(let i=1; i<=9; i++) {
+            const val = document.getElementById("p"+i).value;
+            if (!val) {
+                alert("Debes completar todos los partidos.");
+                return;
+            }
+            picks.push(val);
+        }
 
-  const res = await fetch(API_URL, {
-    method:"POST",
-    body: JSON.stringify({
-      nombre,
-      quiniela
-    })
-  });
+        // Bloquear botón y mostrar estado
+        btn.disabled = true;
+        btn.innerText = "PROCESANDO...";
+        msg.innerText = "⏳ Guardando tu quiniela en el sistema...";
+        msg.style.color = "#94a3b8";
 
-  const data = await res.json();
+        try {
+            const payload = {
+                nombre: nombre,
+                jornada: "J10", // Puedes cambiar esto según la jornada actual
+                picks: picks
+            };
 
-  document.getElementById("msg").innerText =
-    data.status === "OK"
-      ? "✔ Enviado. Puntos: " + data.puntos
-      : "❌ Error: " + data.message;
-}
+            const response = await fetch(API_URL, {
+                method: "POST",
+                mode: "cors", // Cambiar a 'no-cors' solo si tienes errores de red constantes
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (data.status === "OK") {
+                msg.innerHTML = `
+                    <div style="background: #064e3b; padding: 15px; border-radius: 8px;">
+                        <span style="color: #22c55e; display: block; font-size: 1.2rem;">✔ ¡ÉXITO!</span>
+                        Puntos obtenidos: ${data.puntos} / 9
+                    </div>
+                `;
+                btn.style.display = "none"; // Ocultar botón tras envío exitoso
+            } else {
+                throw new Error(data.message);
+            }
+
+        } catch (error) {
+            console.error("Error:", error);
+            msg.innerHTML = `<span style="color: #ef4444;">❌ Error al enviar. Inténtalo de nuevo.</span>`;
+            btn.disabled = false;
+            btn.innerText = "REINTENTAR ENVÍO";
+        }
+    }
 </script>
 
 </body>
