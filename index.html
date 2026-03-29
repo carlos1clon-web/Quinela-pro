@@ -1,210 +1,250 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiniela PRO v5.0</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quinielas Liga MX</title>
 
-        .container {
-            max-width: 450px;
-            margin: auto;
-            background: #1e293b;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
+<style>
+body{
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  margin:0;
+  text-align:center;
+}
 
-        h2 {
-            margin-top: 0;
-            color: #22c55e;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+.header{
+  background:#1e293b;
+  padding:15px;
+}
 
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+h1{
+  margin:0;
+  color:#38bdf8;
+}
 
-        label {
-            display: block;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            color: #94a3b8;
-        }
+.container{
+  padding:20px;
+  max-width:600px;
+  margin:auto;
+}
 
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
+input{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:none;
+  background:#e5e7eb;
+}
 
-        select {
-            cursor: pointer;
-            border-left: 4px solid #22c55e;
-        }
+button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:none;
+  background:#38bdf8;
+  font-weight:bold;
+}
 
-        button {
-            background: #22c55e;
-            border: none;
-            color: #0f172a;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
+.partido{
+  background:#1e293b;
+  margin:10px 0;
+  padding:10px;
+  border-radius:12px;
+}
 
-        button:hover {
-            background: #16a34a;
-            transform: translateY(-2px);
-        }
+.opciones button{
+  width:30%;
+  margin:2px;
+}
 
-        #msg {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            min-height: 20px;
-        }
+.seleccionado{
+  background:#22c55e !important;
+}
 
-        .partido-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #334155;
-            padding: 5px 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
+.btn-whatsapp{
+  background:#25D366;
+  color:white;
+}
 
-        .partido-row span {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .partido-row select {
-            width: 60%;
-            margin: 0;
-        }
-    </style>
+.lista{
+  background:#020617;
+  margin-top:20px;
+  padding:10px;
+  border-radius:10px;
+  text-align:left;
+  font-size:14px;
+}
+</style>
 </head>
+
 <body>
 
+<div class="header">
+  <h1>Quinielas Liga MX</h1>
+</div>
+
 <div class="container">
-    <h2>🔥 Quiniela PRO</h2>
-    <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">LIGA MX - CLAUSURA 2026</p>
 
-    <div class="input-group">
-        <label>Nombre del Participante:</label>
-        <input type="text" id="nombre" placeholder="Ej. Juan Pérez" autocomplete="off">
-    </div>
+<input type="text" value="Jornada 10" disabled>
+<input type="text" value="$10 pesos por quiniela" disabled>
+<input type="text" value="Cierre: Viernes 20:00" disabled>
+<input type="text" value="Informes al +52 55 7224 6040" disabled>
 
-    <div id="partidos">
-        </div>
+<button onclick="abrirFacebook()">Grupo de Facebook</button>
 
-    <button id="btnEnviar" onclick="enviar()">ENVIAR PRONÓSTICOS</button>
+<input type="text" id="total" placeholder="Total de quinielas" disabled>
+<input type="text" id="nombre" placeholder="Nombre del participante">
 
-    <div id="msg"></div>
+<div id="partidos"></div>
+
+<button onclick="agregarQuiniela()">Agregar Quiniela</button>
+<button onclick="limpiar()">Limpiar</button>
+<button onclick="aleatorio()">Llenado Aleatorio</button>
+
+<button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
+
+<div id="lista" class="lista"></div>
+
 </div>
 
 <script>
-    // 1. PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
-    const API_URL = "https://script.google.com/macros/s/AKfycbz4e1jm5JnKpFvCvRjI4Ss1UDi42TlqtaE2lBUOwQxpVHf_rnGyAdKBNzCxQX6X616mTw/exec";
 
-    const partidosDiv = document.getElementById("partidos");
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxJ7ulso9mbznF9azzWBIOhwsnqlrNX9flSVcXvzkQZGXUGC_z78UiPyC1HzitA-Ct-OA/exec";
 
-    // Generar los 9 selects dinámicamente
-    for(let i=1; i<=9; i++) {
-        partidosDiv.innerHTML += `
-            <div class="partido-row">
-                <span>Partido ${i}</span>
-                <select id="p${i}">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Local (1)</option>
-                    <option value="X">Empate (X)</option>
-                    <option value="2">Visitante (2)</option>
-                </select>
-            </div>
-        `;
+function abrirFacebook(){
+  window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
+}
+
+const contenedor = document.getElementById("partidos");
+
+for(let i=1;i<=9;i++){
+  contenedor.innerHTML += `
+    <div class="partido">
+      <p>Partido ${i}</p>
+      <div class="opciones">
+        <button onclick="toggle(this)">L</button>
+        <button onclick="toggle(this)">E</button>
+        <button onclick="toggle(this)">V</button>
+      </div>
+    </div>
+  `;
+}
+
+function toggle(btn){
+  btn.classList.toggle("seleccionado");
+}
+
+function quinielaCompleta(){
+  let ok = true;
+  document.querySelectorAll(".opciones").forEach(op=>{
+    if(op.querySelectorAll(".seleccionado").length === 0){
+      ok = false;
     }
+  });
+  return ok;
+}
 
-    async function enviar() {
-        const nombre = document.getElementById("nombre").value.trim();
-        const msg = document.getElementById("msg");
-        const btn = document.getElementById("btnEnviar");
+function generarCombinaciones(){
+  let partidos = [];
 
-        // Validación de nombre
-        if (!nombre) {
-            alert("Por favor, ingresa tu nombre.");
-            return;
-        }
+  document.querySelectorAll(".opciones").forEach(op=>{
+    let sel = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
+    partidos.push(sel);
+  });
 
-        // Recolectar picks
-        let picks = [];
-        for(let i=1; i<=9; i++) {
-            const val = document.getElementById("p"+i).value;
-            if (!val) {
-                alert("Debes completar todos los partidos.");
-                return;
-            }
-            picks.push(val);
-        }
+  let resultado = [[]];
 
-        // Bloquear botón y mostrar estado
-        btn.disabled = true;
-        btn.innerText = "PROCESANDO...";
-        msg.innerText = "⏳ Guardando tu quiniela en el sistema...";
-        msg.style.color = "#94a3b8";
+  partidos.forEach(opciones=>{
+    let temp = [];
+    resultado.forEach(r=>{
+      opciones.forEach(o=>{
+        temp.push([...r, o]);
+      });
+    });
+    resultado = temp;
+  });
 
-        try {
-            const payload = {
-                nombre: nombre,
-                jornada: "J10", // Puedes cambiar esto según la jornada actual
-                picks: picks
-            };
+  return resultado;
+}
 
-            const response = await fetch(API_URL, {
-                method: "POST",
-                mode: "cors", // Cambiar a 'no-cors' solo si tienes errores de red constantes
-                body: JSON.stringify(payload)
-            });
+function agregarQuiniela(){
 
-            const data = await response.json();
+  let combinaciones = generarCombinaciones();
+  let lista = document.getElementById("lista");
 
-            if (data.status === "OK") {
-                msg.innerHTML = `
-                    <div style="background: #064e3b; padding: 15px; border-radius: 8px;">
-                        <span style="color: #22c55e; display: block; font-size: 1.2rem;">✔ ¡ÉXITO!</span>
-                        Puntos obtenidos: ${data.puntos} / 9
-                    </div>
-                `;
-                btn.style.display = "none"; // Ocultar botón tras envío exitoso
-            } else {
-                throw new Error(data.message);
-            }
+  lista.innerHTML = "";
 
-        } catch (error) {
-            console.error("Error:", error);
-            msg.innerHTML = `<span style="color: #ef4444;">❌ Error al enviar. Inténtalo de nuevo.</span>`;
-            btn.disabled = false;
-            btn.innerText = "REINTENTAR ENVÍO";
-        }
-    }
+  combinaciones.forEach((c,i)=>{
+    lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
+  });
+
+  document.getElementById("total").value = combinaciones.length;
+}
+
+function limpiar(){
+  location.reload();
+}
+
+function aleatorio(){
+  document.querySelectorAll(".opciones").forEach(op=>{
+    let botones = op.querySelectorAll("button");
+    botones.forEach(b => b.classList.remove("seleccionado"));
+    let rand = Math.floor(Math.random()*3);
+    botones[rand].classList.add("seleccionado");
+  });
+}
+
+function enviarWhats(){
+
+  let nombre = document.getElementById("nombre").value.trim();
+  let lista = document.getElementById("lista").innerText || "";
+  let total = document.getElementById("total").value || 0;
+
+  if(nombre === ""){
+    alert("Debes ingresar el nombre antes de enviar");
+    return;
+  }
+
+  if(lista === ""){
+    alert("Primero debes agregar una quiniela");
+    return;
+  }
+
+  let cantidad = parseInt(total) || 0;
+  let pago = cantidad * 10;
+
+  let mensaje = `📊 Quiniela Liga MX\n\n👤 Participante: ${nombre}\n\n📋 Selecciones:\n${lista}\n\n📊 Total: ${cantidad} quinielas\n💰 Total a pagar: $${pago} MXN`;
+
+  let combinaciones = generarCombinaciones();
+
+  fetch(URL_SCRIPT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nombre: nombre,
+      quiniela: combinaciones
+    })
+  });
+
+  // LIMPIAR TODO DESPUÉS DE ENVIAR
+  document.querySelectorAll(".seleccionado").forEach(btn=>{
+    btn.classList.remove("seleccionado");
+  });
+
+  document.getElementById("lista").innerHTML = "";
+  document.getElementById("total").value = "";
+  document.getElementById("nombre").value = "";
+
+  let numero = "525610791509";
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
+}
+
 </script>
 
 </body>
