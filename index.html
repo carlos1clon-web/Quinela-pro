@@ -113,7 +113,76 @@ button{
 
 <script>
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz4e1jm5JnKpFvCvRjI4Ss1UDi42TlqtaE2lBUOwQxpVHf_rnGyAdKBNzCxQX6X616mTw/exec";
+const URL_SCRIPT = "/**
+ * ============================================================
+ * QUINIELA LIGA MX - BACKEND PROFESIONAL v11.0
+ * Resuelve el error: "doGet no encontrada"
+ * ============================================================
+ */
+
+const NOMBRE_HOJA_DATOS = "QUINIELAS";
+const NOMBRE_HOJA_RES = "RESULTADOS";
+const TOTAL_PARTIDOS = 9;
+
+// ESTA FUNCIÓN ES LA QUE EVITA EL ERROR "doGet no encontrada"
+function doGet(e) {
+  return ContentService.createTextOutput("✅ El servidor de la Quiniela está ACTIVO y esperando datos.")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function doPost(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(NOMBRE_HOJA_DATOS) || ss.insertSheet(NOMBRE_HOJA_DATOS);
+  const resSheet = ss.getSheetByName(NOMBRE_HOJA_RES);
+
+  try {
+    // 1. EXTRAER DATOS DEL HTML
+    const data = JSON.parse(e.postData.contents);
+    const nombre = data.nombre || "Sin Nombre";
+    const combinaciones = data.quiniela; 
+
+    if (!combinaciones || !Array.isArray(combinaciones)) {
+      throw new Error("Formato de quiniela inválido");
+    }
+
+    // 2. OBTENER RESULTADOS OFICIALES (B2:B10)
+    let reales = [];
+    if (resSheet) {
+      reales = resSheet.getRange(2, 2, TOTAL_PARTIDOS, 1).getValues().flat().map(r => r.toString().trim().toUpperCase());
+    }
+
+    // 3. PROCESAR COMBINACIONES
+    const nuevasFilas = combinaciones.map(pronosticos => {
+      let puntos = 0;
+      pronosticos.forEach((pick, index) => {
+        if (reales[index] && pick.toString().toUpperCase() === reales[index]) {
+          puntos++;
+        }
+      });
+
+      return [
+        new Date(),   
+        nombre,       
+        "Jornada 10", 
+        ...pronosticos, 
+        puntos        
+      ];
+    });
+
+    // 4. GUARDAR EN SHEETS
+    if (nuevasFilas.length > 0) {
+      sheet.getRange(sheet.getLastRow() + 1, 1, nuevasFilas.length, TOTAL_PARTIDOS + 4).setValues(nuevasFilas);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({"status": "ok", "procesadas": nuevasFilas.length}))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    sheet.appendRow([new Date(), "ERROR", error.toString()]);
+    return ContentService.createTextOutput(JSON.stringify({"status": "error", "mensaje": error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}";
 
 function abrirFacebook(){
   window.open("https://www.facebook.com/share/g/18kcwQzkPk/?mibextid=wwXIfr", "_blank");
