@@ -1,226 +1,78 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiniela Liga MX</title>
+<title>Quiniela</title>
 
 <style>
-body{
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-  text-align:center;
-}
-
-h1{
-  margin-top:20px;
-}
-
-.partido{
-  margin:15px;
-  padding:10px;
-  background:#1e293b;
-  border-radius:10px;
-}
-
-button{
-  padding:10px;
-  margin:5px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.opciones button{
-  background:#334155;
-  color:white;
-}
-
-.seleccionado{
-  background:#22c55e !important;
-}
-
-input{
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  margin:10px;
-}
-
-#lista{
-  margin-top:20px;
-  max-height:200px;
-  overflow:auto;
-  background:#020617;
-  padding:10px;
-  border-radius:10px;
-}
-
-.btn{
-  background:#3b82f6;
-  color:white;
-}
-
-.btn-whatsapp{
-  background:#25d366;
-  color:white;
-}
+body { font-family: Arial; text-align: center; }
+button { margin: 5px; padding: 10px; }
+.sel { background: green; color: white; }
 </style>
 </head>
 
 <body>
 
-<h1>⚽ Quiniela Liga MX</h1>
+<h2>Quiniela</h2>
 
-<input type="text" id="nombre" placeholder="Tu nombre">
+<input id="nombre" placeholder="Tu nombre"><br><br>
 
 <div id="partidos"></div>
 
-<button class="btn" onclick="agregarQuiniela()">Generar Quinielas</button>
-
-<div id="lista"></div>
-
-<input type="hidden" id="total">
-
-<br><br>
-
-<button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
+<br>
+<button onclick="enviar()">Enviar</button>
 
 <script>
 // 🔴 PEGA TU URL AQUI
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxZ9m44MV6-AuQd1UqzBV1t0rYVnvcpJO9Sh9fVL5nH2SOsIomUs5ysW-DGgRxkwIMvKw/exec";
+const URL = "https://script.google.com/macros/s/AKfycbyO8DwrZNEqanr6V9zzAgQd83IlXhAONfeYrGgBQRweZrtKTsQqR5AggrjVQG2V6M43/exec";
 
-// GENERAR PARTIDOS
-const contenedor = document.getElementById("partidos");
+// CREAR 9 PARTIDOS
+const cont = document.getElementById("partidos");
 
 for(let i=1;i<=9;i++){
-  contenedor.innerHTML += `
-    <div class="partido">
-      <h3>Partido ${i}</h3>
-      <div class="opciones">
-        <button onclick="seleccionar(this)">L</button>
-        <button onclick="seleccionar(this)">E</button>
-        <button onclick="seleccionar(this)">V</button>
-      </div>
+  cont.innerHTML += `
+    <div>
+      Partido ${i}:
+      <button onclick="sel(this)">L</button>
+      <button onclick="sel(this)">E</button>
+      <button onclick="sel(this)">V</button>
     </div>
   `;
 }
 
-// SELECCIONAR OPCIONES
-function seleccionar(btn){
-  btn.classList.toggle("seleccionado");
-}
-
-// GENERAR COMBINACIONES
-const LIMITE = 200;
-
-function generarCombinaciones(){
-  let partidos = [];
-
-  for (let op of document.querySelectorAll(".opciones")) {
-    let sel = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
-
-    if(sel.length === 0){
-      alert("Selecciona al menos una opción en cada partido");
-      return [];
-    }
-
-    partidos.push(sel);
-  }
-
-  let resultado = [[]];
-
-  partidos.forEach(opciones=>{
-    let temp = [];
-
-    resultado.forEach(r=>{
-      opciones.forEach(o=>{
-        temp.push([...r, o]);
-      });
-    });
-
-    resultado = temp;
-
-    if(resultado.length > LIMITE){
-      alert("Demasiadas combinaciones");
-      resultado = [];
-      return;
-    }
-  });
-
-  return resultado;
-}
-
-// MOSTRAR QUINIELAS
-function agregarQuiniela(){
-  let combinaciones = generarCombinaciones();
-  if(combinaciones.length === 0) return;
-
-  let lista = document.getElementById("lista");
-  lista.innerHTML = "";
-
-  const MAX = 50;
-
-  combinaciones.slice(0, MAX).forEach((c,i)=>{
-    lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
-  });
-
-  if(combinaciones.length > MAX){
-    lista.innerHTML += `<br>... y ${combinaciones.length - MAX} más`;
-  }
-
-  document.getElementById("total").value = combinaciones.length;
+// SELECCIONAR SOLO UNA OPCIÓN
+function sel(btn){
+  let parent = btn.parentElement;
+  parent.querySelectorAll("button").forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");
 }
 
 // ENVIAR
-async function enviarWhats(){
-  let nombre = document.getElementById("nombre").value.trim();
-  let listaHtml = document.getElementById("lista").innerText;
-  let total = document.getElementById("total").value;
+function enviar(){
+  let nombre = document.getElementById("nombre").value;
+  let picks = [];
 
-  if(nombre === "" || listaHtml === ""){
-    alert("Completa los datos");
-    return;
-  }
-
-  let combinaciones = generarCombinaciones();
-  if(combinaciones.length === 0) return;
-
-  const btn = document.querySelector(".btn-whatsapp");
-  btn.disabled = true;
-  btn.innerText = "Enviando...";
-
-  let enviado = true;
-
-  try {
-    const res = await fetch(URL_SCRIPT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre, quiniela: combinaciones })
-    });
-
-    const data = await res.json();
-
-    if(data.status !== "ok"){
-      throw new Error("Error backend");
+  document.querySelectorAll("#partidos div").forEach(p=>{
+    let sel = p.querySelector(".sel");
+    if(!sel){
+      alert("Falta seleccionar un partido");
+      return;
     }
+    picks.push(sel.innerText);
+  });
 
-  } catch (e) {
-    enviado = false;
-    console.error(e);
-  }
-
-  if(enviado){
-    let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n${listaHtml}\n\n💰 Total: $${total * 10}`;
-    window.open(`https://wa.me/525610791509?text=${encodeURIComponent(mensaje)}`, "_blank");
-  } else {
-    alert("Error al guardar en Sheets");
-  }
-
-  btn.disabled = false;
-  btn.innerText = "Enviar por WhatsApp";
+  fetch(URL, {
+    method: "POST",
+    body: JSON.stringify({ nombre, picks }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(r=>r.text())
+  .then(r=>{
+    alert("Guardado!");
+  })
+  .catch(e=>{
+    alert("Error");
+  });
 }
 </script>
 
