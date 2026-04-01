@@ -9,13 +9,13 @@ body{ font-family: Arial; background:#0f172a; color:white; margin:0; text-align:
 .header{ background:#1e293b; padding:15px; }
 h1{ margin:0; color:#38bdf8; }
 .container{ padding:20px; max-width:600px; margin:auto; }
-input{ width:100%; padding:12px; margin:6px 0; border-radius:10px; border:none; background:#e5e7eb; color:#000; }
+input{ width:100%; padding:12px; margin:6px 0; border-radius:10px; border:none; background:#e5e7eb; color:black; }
 button{ width:100%; padding:12px; margin:6px 0; border-radius:10px; border:none; background:#38bdf8; font-weight:bold; cursor:pointer; }
 .partido{ background:#1e293b; margin:10px 0; padding:10px; border-radius:12px; }
 .opciones button{ width:30%; margin:2px; background:#475569; color:white; }
 .seleccionado{ background:#22c55e !important; }
 .btn-whatsapp{ background:#25D366; color:white; }
-.lista{ background:#020617; margin-top:20px; padding:10px; border-radius:10px; text-align:left; font-size:14px; min-height: 20px;}
+.lista{ background:#020617; margin-top:20px; padding:10px; border-radius:10px; text-align:left; font-size:14px; min-height:20px; }
 </style>
 </head>
 <body>
@@ -27,29 +27,20 @@ button{ width:100%; padding:12px; margin:6px 0; border-radius:10px; border:none;
     <input type="text" value="$10 pesos por quiniela" disabled>
     <input type="text" value="Cierre: Viernes 20:00" disabled>
     <input type="text" value="Informes al +52 55 7224 6040" disabled>
-
-    <button onclick="abrirFacebook()">Grupo de Facebook</button>
-
+    <button onclick="window.open('https://www.facebook.com/share/g/18kcwQzkPk/', '_blank')">Grupo de Facebook</button>
     <input type="text" id="total" placeholder="Total de quinielas" disabled>
     <input type="text" id="nombre" placeholder="Nombre del participante">
-
     <div id="partidos"></div>
-
     <button onclick="agregarQuiniela()">Agregar Quiniela</button>
-    <button onclick="limpiar()">Limpiar</button>
+    <button onclick="location.reload()">Limpiar</button>
     <button onclick="aleatorio()">Llenado Aleatorio</button>
     <button class="btn-whatsapp" onclick="enviarWhats()">Enviar por WhatsApp</button>
-
     <div id="lista" class="lista"></div>
 </div>
 
 <script>
-// Pega aquí la URL que obtengas de "Implementar" en Google Sheets
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz4e1jm5JnKpFvCvRjI4Ss1UDi42TlqtaE2lBUOwQxpVHf_rnGyAdKBNzCxQX6X616mTw/exec"; 
-
-function abrirFacebook(){
-    window.open("https://www.facebook.com/share/g/18kcwQzkPk/", "_blank");
-}
+/* URL DE TU SCRIPT YA INTEGRADA */
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycby9NaDw6HBESTQVKOUuGVIb6Exja0DN53iCioa4dK0O6WjtVDTH1TepSfrJnzKNjab5uw/exec"; 
 
 const contenedor = document.getElementById("partidos");
 for(let i=1;i<=9;i++){
@@ -84,14 +75,13 @@ function generarCombinaciones(){
 }
 
 function agregarQuiniela(){
-    let combinaciones = generarCombinaciones();
+    let comb = generarCombinaciones();
+    if(comb[0].length < 9) { alert("Completa todos los partidos"); return; }
     let lista = document.getElementById("lista");
     lista.innerHTML = "";
-    combinaciones.forEach((c,i)=>{ lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`; });
-    document.getElementById("total").value = combinaciones.length;
+    comb.forEach((c,i)=>{ lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`; });
+    document.getElementById("total").value = comb.length;
 }
-
-function limpiar(){ location.reload(); }
 
 function aleatorio(){
     document.querySelectorAll(".opciones").forEach(op=>{
@@ -105,20 +95,19 @@ function enviarWhats(){
     let nombre = document.getElementById("nombre").value.trim();
     let lista = document.getElementById("lista").innerText || "";
     let total = document.getElementById("total").value || 0;
-
-    if(nombre === "" || lista === ""){ alert("Ingresa nombre y agrega quiniela"); return; }
+    if(!nombre || !lista){ alert("Ingresa nombre y agrega quiniela"); return; }
 
     let combinaciones = generarCombinaciones();
     
-    // ENVÍO A GOOGLE SHEETS
+    // ENVÍO AL EXCEL (Segundo plano)
     fetch(URL_SCRIPT, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre: nombre, quiniela: combinaciones })
     });
 
-    let mensaje = `📊 Quiniela Liga MX\n\n👤 Participante: ${nombre}\n\n📋 Selecciones:\n${lista}\n\n💰 Total: $${total * 10} MXN`;
+    // ENVÍO A WHATSAPP
+    let mensaje = `📊 Quiniela Liga MX\n👤 Participante: ${nombre}\n📋 Selecciones:\n${lista}\n💰 Total: $${total * 10} MXN`;
     window.open(`https://wa.me/525610791509?text=${encodeURIComponent(mensaje)}`);
 }
 </script>
