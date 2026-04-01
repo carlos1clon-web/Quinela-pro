@@ -13,71 +13,16 @@ body{
   margin:0;
   text-align:center;
 }
-
-.header{
-  background:#1e293b;
-  padding:15px;
-}
-
-h1{
-  margin:0;
-  color:#38bdf8;
-}
-
-.container{
-  padding:20px;
-  max-width:600px;
-  margin:auto;
-}
-
-input{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:10px;
-  border:none;
-  background:#e5e7eb;
-}
-
-button{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:10px;
-  border:none;
-  background:#38bdf8;
-  font-weight:bold;
-}
-
-.partido{
-  background:#1e293b;
-  margin:10px 0;
-  padding:10px;
-  border-radius:12px;
-}
-
-.opciones button{
-  width:30%;
-  margin:2px;
-}
-
-.seleccionado{
-  background:#22c55e !important;
-}
-
-.btn-whatsapp{
-  background:#25D366;
-  color:white;
-}
-
-.lista{
-  background:#020617;
-  margin-top:20px;
-  padding:10px;
-  border-radius:10px;
-  text-align:left;
-  font-size:14px;
-}
+.header{background:#1e293b;padding:15px;}
+h1{margin:0;color:#38bdf8;}
+.container{padding:20px;max-width:600px;margin:auto;}
+input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#e5e7eb;}
+button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#38bdf8;font-weight:bold;}
+.partido{background:#1e293b;margin:10px 0;padding:10px;border-radius:12px;}
+.opciones button{width:30%;margin:2px;}
+.seleccionado{background:#22c55e !important;}
+.btn-whatsapp{background:#25D366;color:white;}
+.lista{background:#020617;margin-top:20px;padding:10px;border-radius:10px;text-align:left;font-size:14px;}
 </style>
 </head>
 
@@ -111,7 +56,7 @@ button{
 
 <script>
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycby7_VVCc6cpNJ5Yoy81PsfvCmMRVQw1UFumwfAJNiVx5vKt4Z47qKzKRRDmw8-05QLT/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyCcTnD1SH2Yi5VWjOk27RCTACtxvwv7eT5dj25hJi9d0qFy9-KLLd48pGXlizPPWza/exec"; // 👈 pega tu /exec
 
 const contenedor = document.getElementById("partidos");
 
@@ -140,6 +85,12 @@ function generarCombinaciones(){
     partidos.push(sel);
   });
 
+  // 🔴 VALIDACIÓN REAL
+  if(partidos.some(p => p.length === 0)){
+    alert("Falta seleccionar en algunos partidos");
+    return [];
+  }
+
   let resultado = [[]];
 
   partidos.forEach(opciones=>{
@@ -159,10 +110,7 @@ function agregarQuiniela(){
   let combinaciones = generarCombinaciones();
   let lista = document.getElementById("lista");
 
-  if(combinaciones.length === 0){
-    alert("Selecciona al menos una opción por partido");
-    return;
-  }
+  if(combinaciones.length === 0) return;
 
   lista.innerHTML = "";
 
@@ -183,31 +131,31 @@ function guardarSheets(){
     return;
   }
 
-  if(combinaciones.length === 0){
-    alert("Genera una quiniela primero");
-    return;
-  }
+  if(combinaciones.length === 0) return;
 
   fetch(URL_SCRIPT, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
       nombre: nombre,
-      picks: combinaciones
+      quiniela: combinaciones // ✅ CORREGIDO
     })
   })
-  .then(res => res.text())
+  .then(res => res.json())
   .then(res => {
-    alert("✅ Guardado en Sheets");
+    if(res.status === "ok"){
+      alert("✅ Guardado correctamente");
+    }else{
+      alert("❌ Error: " + res.mensaje);
+    }
   })
   .catch(err => {
-    alert("❌ Error al guardar");
+    alert("❌ Error de conexión");
     console.error(err);
   });
 }
 
 function enviarWhats(){
-
   let nombre = document.getElementById("nombre").value.trim();
   let lista = document.getElementById("lista").innerText;
   let total = document.getElementById("total").value;
