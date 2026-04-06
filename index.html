@@ -155,55 +155,51 @@ function guardarSheets() {
     btn.disabled = false;
   });
 }
-function enviarWhats() {
+async function enviarWhats() {
+  // 1. CAPTURAMOS LOS DATOS PRIMERO (Los guardamos en memoria)
   let nombreInput = document.getElementById("nombre");
-  let nombre = nombreInput.value.trim();
-  let combinaciones = generarCombinaciones();
-  let lista = document.getElementById("lista").innerText;
   let totalInput = document.getElementById("total");
-  let total = totalInput.value;
+  
+  let nombreEnvio = nombreInput.value.trim();
+  let combinacionesEnvio = generarCombinaciones(); // Guardamos los datos aquí
+  let listaEnvio = document.getElementById("lista").innerText;
+  let totalEnvio = totalInput.value;
 
-  // Validación inicial
-  if (nombre === "" || lista === "") {
-    alert("⚠️ Completa la quiniela y dale a 'Generar' primero");
+  // Validación
+  if (nombreEnvio === "" || listaEnvio === "") {
+    alert("⚠️ Completa la quiniela primero");
     return;
   }
 
-  // 1. GUARDAR EN GOOGLE SHEETS (Silencioso)
+  // 2. ENVIAR A GOOGLE SHEETS (Usamos la copia "Envio")
   try {
     fetch(URL_SCRIPT, {
       method: "POST",
       mode: "no-cors",
       body: JSON.stringify({
-        nombre: nombre,
-        quiniela: combinaciones
+        nombre: nombreEnvio,
+        quiniela: combinacionesEnvio
       })
     });
+    console.log("Datos enviados a Sheets correctamente.");
   } catch (e) {
-    console.error("Error al guardar:", e);
+    console.error("Error en el envío:", e);
   }
 
-  // 2. ENVIAR POR WHATSAPP
-  let pago = total * 10;
-  let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombre}\n\n${lista}\n\n*Total:* ${total}\n*A pagar:* $${pago}`;
+  // 3. ENVIAR A WHATSAPP
+  let pago = totalEnvio * 10;
+  let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombreEnvio}\n\n${listaEnvio}\n\n*Total:* ${totalEnvio}\n*A pagar:* $${pago}`;
   let numero = "525610791509";
-  
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 
-  // 3. REINICIAR EL SISTEMA (El toque final)
+  // 4. REINICIAR EL SISTEMA (Con un retraso para asegurar el proceso)
   setTimeout(() => {
-    // Limpiamos los partidos (L-E-V)
-    limpiar(); 
-    
-    // Limpiamos el nombre y el total
+    limpiar(); // Tu función de botones L-E-V
     nombreInput.value = "";
     totalInput.value = "";
-    
-    // Limpiamos la lista visual de combinaciones
     document.getElementById("lista").innerText = "";
-    
-    console.log("Sistema reiniciado para el siguiente usuario.");
-  }, 1000); // Esperamos 1 segundo para que no sea tan brusco
+    console.log("Sistema reiniciado.");
+  }, 1500); // Le damos 1.5 segundos de margen
 }
 function limpiar(){
   location.reload();
