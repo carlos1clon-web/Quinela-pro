@@ -60,12 +60,27 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1yw7-KTpkEpuW_5CxIf43uGoWGdULCONyqKrIom0l-9CHQFD0/exec"; // 👈 pega tu /exec
 
-const contenedor = document.getElementById("partidos");
+// 1. LISTA REAL DE PARTIDOS (Puedes cambiar estos nombres cada semana)
+const partidosJornada = [
+  "San Luis vs América",
+  "Chivas vs Atlas",
+  "Cruz Azul vs Tigres",
+  "Monterrey vs Pachuca",
+  "León vs Toluca",
+  "Xolos vs Puebla",
+  "Mazatlán vs Necaxa",
+  "Querétaro vs Juárez",
+  "Pumas vs Santos"
+];
 
-for(let i=1;i<=9;i++){
+const contenedor = document.getElementById("partidos");
+contenedor.innerHTML = ""; // Limpiamos por si acaso
+
+// 2. GENERAMOS LOS PARTIDOS CON SUS NOMBRES REALES
+partidosJornada.forEach((juego, i) => {
   contenedor.innerHTML += `
     <div class="partido">
-      <p>Partido ${i}</p>
+      <p><strong>${juego}</strong></p>
       <div class="opciones">
         <button onclick="toggle(this)">L</button>
         <button onclick="toggle(this)">E</button>
@@ -73,7 +88,7 @@ for(let i=1;i<=9;i++){
       </div>
     </div>
   `;
-}
+});
 
 function toggle(btn){
   btn.classList.toggle("seleccionado");
