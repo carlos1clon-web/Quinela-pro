@@ -156,10 +156,12 @@ function guardarSheets() {
   });
 }
 function enviarWhats() {
-  let nombre = document.getElementById("nombre").value.trim();
+  let nombreInput = document.getElementById("nombre");
+  let nombre = nombreInput.value.trim();
   let combinaciones = generarCombinaciones();
   let lista = document.getElementById("lista").innerText;
-  let total = document.getElementById("total").value;
+  let totalInput = document.getElementById("total");
+  let total = totalInput.value;
 
   // Validación inicial
   if (nombre === "" || lista === "") {
@@ -167,7 +169,7 @@ function enviarWhats() {
     return;
   }
 
-  // --- PARTE 1: GUARDAR EN GOOGLE SHEETS (Silencioso) ---
+  // 1. GUARDAR EN GOOGLE SHEETS (Silencioso)
   try {
     fetch(URL_SCRIPT, {
       method: "POST",
@@ -177,18 +179,31 @@ function enviarWhats() {
         quiniela: combinaciones
       })
     });
-    console.log("Datos enviados a Google Sheets...");
   } catch (e) {
-    console.error("Error al intentar guardar:", e);
+    console.error("Error al guardar:", e);
   }
 
-  // --- PARTE 2: ENVIAR POR WHATSAPP ---
+  // 2. ENVIAR POR WHATSAPP
   let pago = total * 10;
   let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombre}\n\n${lista}\n\n*Total:* ${total}\n*A pagar:* $${pago}`;
   let numero = "525610791509";
   
-  // Abrimos la ventana de WhatsApp
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
+
+  // 3. REINICIAR EL SISTEMA (El toque final)
+  setTimeout(() => {
+    // Limpiamos los partidos (L-E-V)
+    limpiar(); 
+    
+    // Limpiamos el nombre y el total
+    nombreInput.value = "";
+    totalInput.value = "";
+    
+    // Limpiamos la lista visual de combinaciones
+    document.getElementById("lista").innerText = "";
+    
+    console.log("Sistema reiniciado para el siguiente usuario.");
+  }, 1000); // Esperamos 1 segundo para que no sea tan brusco
 }
 function limpiar(){
   location.reload();
