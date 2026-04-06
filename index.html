@@ -155,20 +155,37 @@ function guardarSheets() {
     btn.disabled = false;
   });
 }
-function enviarWhats(){
+async function enviarWhats() {
   let nombre = document.getElementById("nombre").value.trim();
+  let combinaciones = generarCombinaciones();
   let lista = document.getElementById("lista").innerText;
   let total = document.getElementById("total").value;
 
-  if(nombre === "" || lista === ""){
-    alert("Completa la quiniela primero");
+  if (nombre === "" || lista === "") {
+    alert("⚠️ Completa la quiniela y genera las combinaciones primero");
     return;
   }
 
+  // --- PARTE 1: GUARDAR EN GOOGLE SHEETS EN SEGUNDO PLANO ---
+  try {
+    // Usamos fetch directamente aquí para no depender del otro botón
+    fetch(URL_SCRIPT, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify({
+        nombre: nombre,
+        quiniela: combinaciones
+      })
+    });
+    console.log("Guardado en Sheets enviado...");
+  } catch (e) {
+    console.error("Error al guardar:", e);
+  }
+
+  // --- PARTE 2: ENVIAR POR WHATSAPP ---
   let pago = total * 10;
-
   let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n${lista}\n\nTotal: ${total}\nPago: $${pago}`;
-
+  
   let numero = "525610791509";
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 }
