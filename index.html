@@ -56,7 +56,7 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 <script>
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyCcTnD1SH2Yi5VWjOk27RCTACtxvwv7eT5dj25hJi9d0qFy9-KLLd48pGXlizPPWza/exec"; // 👈 pega tu /exec
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1yw7-KTpkEpuW_5CxIf43uGoWGdULCONyqKrIom0l-9CHQFD0/exec"; // 👈 pega tu /exec
 
 const contenedor = document.getElementById("partidos");
 
@@ -121,40 +121,40 @@ function agregarQuiniela(){
   document.getElementById("total").value = combinaciones.length;
 }
 
-function guardarSheets(){
-
+function guardarSheets() {
   let nombre = document.getElementById("nombre").value.trim();
   let combinaciones = generarCombinaciones();
 
-  if(nombre === ""){
-    alert("Escribe tu nombre");
+  if (nombre === "") {
+    alert("Por favor, escribe tu nombre");
     return;
   }
+  if (combinaciones.length === 0) return;
 
-  if(combinaciones.length === 0) return;
+  // Cambiamos el botón para avisar que está trabajando
+  const btn = event.target;
+  btn.innerText = "⏳ Guardando...";
+  btn.disabled = true;
 
   fetch(URL_SCRIPT, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    mode: "no-cors", // <--- Crucial para evitar errores de bloqueo
     body: JSON.stringify({
       nombre: nombre,
-      quiniela: combinaciones // ✅ CORREGIDO
+      quiniela: combinaciones
     })
   })
-  .then(res => res.json())
-  .then(res => {
-    if(res.status === "ok"){
-      alert("✅ Guardado correctamente");
-    }else{
-      alert("❌ Error: " + res.mensaje);
-    }
+  .then(() => {
+    alert("✅ ¡Datos enviados al sistema!");
+    btn.innerText = "💾 Guardar en sistema";
+    btn.disabled = false;
   })
   .catch(err => {
-    alert("❌ Error de conexión");
+    alert("❌ Error al conectar. Revisa tu URL de Script.");
     console.error(err);
+    btn.disabled = false;
   });
 }
-
 function enviarWhats(){
   let nombre = document.getElementById("nombre").value.trim();
   let lista = document.getElementById("lista").innerText;
