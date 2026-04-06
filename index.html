@@ -158,22 +158,24 @@ function guardarSheets() {
   });
 }
 async function enviarWhats() {
-  // 1. CAPTURAMOS LOS DATOS PRIMERO (Los guardamos en memoria)
+  // 1. CAPTURAR ELEMENTOS Y DATOS
   let nombreInput = document.getElementById("nombre");
   let totalInput = document.getElementById("total");
-  
+  let listaContenedor = document.getElementById("lista");
+  let mensajeExito = document.getElementById("mensaje-exito"); 
+
   let nombreEnvio = nombreInput.value.trim();
-  let combinacionesEnvio = generarCombinaciones(); // Guardamos los datos aquí
-  let listaEnvio = document.getElementById("lista").innerText;
+  let combinacionesEnvio = generarCombinaciones();
+  let listaEnvio = listaContenedor.innerText;
   let totalEnvio = totalInput.value;
 
-  // Validación
+  // Validación básica
   if (nombreEnvio === "" || listaEnvio === "") {
-    alert("⚠️ Completa la quiniela primero");
+    alert("⚠️ Completa la quiniela y dale a 'Generar' primero");
     return;
   }
 
-  // 2. ENVIAR A GOOGLE SHEETS (Usamos la copia "Envio")
+  // 2. GUARDAR EN GOOGLE SHEETS (Silencioso)
   try {
     fetch(URL_SCRIPT, {
       method: "POST",
@@ -183,25 +185,38 @@ async function enviarWhats() {
         quiniela: combinacionesEnvio
       })
     });
-    console.log("Datos enviados a Sheets correctamente.");
+    console.log("Datos enviados a Sheets...");
   } catch (e) {
-    console.error("Error en el envío:", e);
+    console.error("Error al guardar:", e);
   }
 
-  // 3. ENVIAR A WHATSAPP
+  // 3. ENVIAR POR WHATSAPP
   let pago = totalEnvio * 10;
   let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombreEnvio}\n\n${listaEnvio}\n\n*Total:* ${totalEnvio}\n*A pagar:* $${pago}`;
   let numero = "525610791509";
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 
-  // 4. REINICIAR EL SISTEMA (Con un retraso para asegurar el proceso)
+  // --- 4. ACTIVAR EL MENSAJE DE ÉXITO EN PANTALLA ---
+  if (mensajeExito) {
+    mensajeExito.style.display = "block"; // Se vuelve visible
+  }
+
+  // 5. REINICIAR EL SISTEMA (Después de 4 segundos)
   setTimeout(() => {
-    limpiar(); // Tu función de botones L-E-V
+    limpiar(); // Tu función que quita colores L-E-V
+    
+    // Limpiamos los campos de texto
     nombreInput.value = "";
     totalInput.value = "";
-    document.getElementById("lista").innerText = "";
-    console.log("Sistema reiniciado.");
-  }, 1500); // Le damos 1.5 segundos de margen
+    listaContenedor.innerText = "";
+    
+    // Ocultamos el mensaje de éxito para la siguiente quiniela
+    if (mensajeExito) {
+      mensajeExito.style.display = "none";
+    }
+    
+    console.log("Sistema reiniciado para el próximo usuario.");
+  }, 4000); 
 }
 function limpiar(){
   location.reload();
