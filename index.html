@@ -155,20 +155,20 @@ function guardarSheets() {
     btn.disabled = false;
   });
 }
-async function enviarWhats() {
+function enviarWhats() {
   let nombre = document.getElementById("nombre").value.trim();
   let combinaciones = generarCombinaciones();
   let lista = document.getElementById("lista").innerText;
   let total = document.getElementById("total").value;
 
+  // Validación inicial
   if (nombre === "" || lista === "") {
-    alert("⚠️ Completa la quiniela y genera las combinaciones primero");
+    alert("⚠️ Completa la quiniela y dale a 'Generar' primero");
     return;
   }
 
-  // --- PARTE 1: GUARDAR EN GOOGLE SHEETS EN SEGUNDO PLANO ---
+  // --- PARTE 1: GUARDAR EN GOOGLE SHEETS (Silencioso) ---
   try {
-    // Usamos fetch directamente aquí para no depender del otro botón
     fetch(URL_SCRIPT, {
       method: "POST",
       mode: "no-cors",
@@ -177,19 +177,19 @@ async function enviarWhats() {
         quiniela: combinaciones
       })
     });
-    console.log("Guardado en Sheets enviado...");
+    console.log("Datos enviados a Google Sheets...");
   } catch (e) {
-    console.error("Error al guardar:", e);
+    console.error("Error al intentar guardar:", e);
   }
 
   // --- PARTE 2: ENVIAR POR WHATSAPP ---
   let pago = total * 10;
-  let mensaje = `📊 Quiniela Liga MX\n\n👤 ${nombre}\n\n${lista}\n\nTotal: ${total}\nPago: $${pago}`;
-  
+  let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombre}\n\n${lista}\n\n*Total:* ${total}\n*A pagar:* $${pago}`;
   let numero = "525610791509";
+  
+  // Abrimos la ventana de WhatsApp
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 }
-
 function limpiar(){
   location.reload();
 }
