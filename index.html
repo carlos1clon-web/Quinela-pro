@@ -7,7 +7,7 @@
   
 <style>
 body{
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background:#0f172a;
   color:white;
   margin:0;
@@ -17,7 +17,7 @@ body{
 h1{margin:0;color:#38bdf8;}
 .container{padding:20px;max-width:600px;margin:auto;}
 input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#e5e7eb;}
-button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#38bdf8;font-weight:bold;}
+button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#38bdf8;font-weight:bold;cursor:pointer;}
 .partido{background:#1e293b;margin:10px 0;padding:10px;border-radius:12px;}
 .opciones button{width:30%;margin:2px;}
 .seleccionado{background:#22c55e !important;}
@@ -34,9 +34,9 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 <div class="container">
 
-<input type="text" value="Jornada 15" disabled>
+<input type="text" value="Jornada 1" disabled>
 <input type="text" value="$10 pesos por quiniela" disabled>
-<input type="text" value="Cierre: Viernes 17:00" disabled>
+<input type="text" value="Cierre: Jueves 17:00" disabled>
 
 <input type="text" id="total" placeholder="Total de quinielas" disabled>
 <input type="text" id="nombre" placeholder="Nombre del participante">
@@ -47,11 +47,6 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 <button onclick="limpiar()">Limpiar</button>
 <button onclick="aleatorio()">Aleatorio</button>
 
-<div id="lista" class="lista"></div>
-
-<div id="mensaje-exito" style="display: none; background-color: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; border: 1px solid #16a34a; font-weight: bold;">
-  ✅ ¡Quiniela guardada y enviada con éxito!
-</div>
 <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
   
   <button class="btn-whatsapp" onclick="enviarWhats()" style="width: 100%; max-width: 300px;">
@@ -65,37 +60,39 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
   </div>
 
   <div style="text-align: center; background-color: #f0f2f5; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; border: 1px solid #ddd;">
-    <p style="margin-bottom: 10px; font-weight: bold; color: #1877F2; font-family: sans-serif;">
+    <p style="margin-bottom: 10px; font-weight: bold; color: #1877F2;">
       📣 ¡Únete al grupo para ver resultados!
     </p>
-    <a href="https://www.facebook.com/share/g/1B76CTGhrZ/?mibextid=wwXIfr" target="_blank" style="background-color: #1877F2; color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; display: inline-block; font-family: sans-serif; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">
+    <a href="https://www.facebook.com/share/g/1B76CTGhrZ/?mibextid=wwXIfr" target="_blank" style="background-color: #1877F2; color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; display: inline-block; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">
       ⚽ Ir al Grupo de Facebook
     </a>
   </div>
 
-</div> <script>
+</div>
 
+</div> 
 
+<script>
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1yw7-KTpkEpuW_5CxIf43uGoWGdULCONyqKrIom0l-9CHQFD0/exec"; // 👈 pega tu /exec
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1yw7-KTpkEpuW_5CxIf43uGoWGdULCONyqKrIom0l-9CHQFD0/exec"; 
 
-// 1. LISTA REAL DE PARTIDOS (Puedes cambiar estos nombres cada semana)
+// 1. LISTA ACTUALIZADA DE PARTIDOS (JORNADA 1)
 const partidosJornada = [
-   "mazatlan vs queretaro",
-  "san luis vs pumas",
-  "Necaxa vs tigres",
-  "cruz azul vs tijuana",
-  "Monterrey vs pachuca",
-  "chivas vs puebla",
-  "america vs toluca",
-  "leon vs juarez",
-  "santos vs atlas"
+  "Necaxa vs atlante",
+  "Tijuana vs tigres",
+  "San Luis vs cruz azul",
+  "León vs Atlas",
+  "Juarez vs puebla",
+  "Pumas vs Pachuca",
+  "Monterrey vs santos",
+  "Chivas vs Toluca",
+  "Queretaro vs america"
 ];
 
 const contenedor = document.getElementById("partidos");
-contenedor.innerHTML = ""; // Limpiamos por si acaso
+contenedor.innerHTML = ""; 
 
-// 2. GENERAMOS LOS PARTIDOS CON SUS NOMBRES REALES
+// 2. GENERAMOS LOS PARTIDOS EN PANTALLA
 partidosJornada.forEach((juego, i) => {
   contenedor.innerHTML += `
     <div class="partido">
@@ -121,7 +118,6 @@ function generarCombinaciones(){
     partidos.push(sel);
   });
 
-  // 🔴 VALIDACIÓN REAL
   if(partidos.some(p => p.length === 0)){
     alert("Falta seleccionar en algunos partidos");
     return [];
@@ -157,42 +153,7 @@ function agregarQuiniela(){
   document.getElementById("total").value = combinaciones.length;
 }
 
-function guardarSheets() {
-  let nombre = document.getElementById("nombre").value.trim();
-  let combinaciones = generarCombinaciones();
-
-  if (nombre === "") {
-    alert("Por favor, escribe tu nombre");
-    return;
-  }
-  if (combinaciones.length === 0) return;
-
-  // Cambiamos el botón para avisar que está trabajando
-  const btn = event.target;
-  btn.innerText = "⏳ Guardando...";
-  btn.disabled = true;
-
-  fetch(URL_SCRIPT, {
-    method: "POST",
-    mode: "no-cors", // <--- Crucial para evitar errores de bloqueo
-    body: JSON.stringify({
-      nombre: nombre,
-      quiniela: combinaciones
-    })
-  })
-  .then(() => {
-    alert("✅ ¡Datos enviados al sistema!");
-    btn.innerText = "💾 Guardar en sistema";
-    btn.disabled = false;
-  })
-  .catch(err => {
-    alert("❌ Error al conectar. Revisa tu URL de Script.");
-    console.error(err);
-    btn.disabled = false;
-  });
-}
 async function enviarWhats() {
-  // 1. CAPTURAR ELEMENTOS Y DATOS
   let nombreInput = document.getElementById("nombre");
   let totalInput = document.getElementById("total");
   let listaContenedor = document.getElementById("lista");
@@ -203,13 +164,12 @@ async function enviarWhats() {
   let listaEnvio = listaContenedor.innerText;
   let totalEnvio = totalInput.value;
 
-  // Validación básica
   if (nombreEnvio === "" || listaEnvio === "") {
     alert("⚠️ Completa la quiniela y dale a 'Generar' primero");
     return;
   }
 
-  // 2. GUARDAR EN GOOGLE SHEETS (Silencioso)
+  // GUARDAR EN GOOGLE SHEETS (Silencioso)
   try {
     fetch(URL_SCRIPT, {
       method: "POST",
@@ -224,27 +184,24 @@ async function enviarWhats() {
     console.error("Error al guardar:", e);
   }
 
-  // 3. ENVIAR POR WHATSAPP
+  // ENVIAR POR WHATSAPP
   let pago = totalEnvio * 10;
   let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombreEnvio}\n\n${listaEnvio}\n\n*Total:* ${totalEnvio}\n*A pagar:* $${pago}`;
   let numero = "525610791509";
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
 
-  // --- 4. ACTIVAR EL MENSAJE DE ÉXITO EN PANTALLA ---
   if (mensajeExito) {
-    mensajeExito.style.display = "block"; // Se vuelve visible
+    mensajeExito.style.display = "block"; 
   }
 
-  // 5. REINICIAR EL SISTEMA (Después de 4 segundos)
+  // REINICIAR EL SISTEMA (Después de 4 segundos)
   setTimeout(() => {
-    limpiar(); // Tu función que quita colores L-E-V
-    
-    // Limpiamos los campos de texto
     nombreInput.value = "";
     totalInput.value = "";
     listaContenedor.innerText = "";
     
-    // Ocultamos el mensaje de éxito para la siguiente quiniela
+    document.querySelectorAll(".opciones button").forEach(b => b.classList.remove("seleccionado"));
+    
     if (mensajeExito) {
       mensajeExito.style.display = "none";
     }
@@ -252,6 +209,7 @@ async function enviarWhats() {
     console.log("Sistema reiniciado para el próximo usuario.");
   }, 4000); 
 }
+
 function limpiar(){
   location.reload();
 }
