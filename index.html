@@ -34,22 +34,22 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 <div class="container">
 
-<input type="text" value="Jornada 1" disabled>
+<input type="text" id="info-cierre" value="Cierre: Jueves 17:00" style="text-align: center; font-weight: bold;" disabled>
 <input type="text" value="$10 pesos por quiniela" disabled>
-<input type="text" value="Cierre: Jueves 17:00" disabled>
+<input type="text" value="Jornada 1" disabled>
 
 <input type="text" id="total" placeholder="Total de quinielas" disabled>
 <input type="text" id="nombre" placeholder="Nombre del participante">
 
 <div id="partidos"></div>
 
-<button onclick="agregarQuiniela()">Generar Quiniela</button>
-<button onclick="limpiar()">Limpiar</button>
-<button onclick="aleatorio()">Aleatorio</button>
+<button id="btn-generar" onclick="agregarQuiniela()">Generar Quiniela</button>
+<button id="btn-limpiar" onclick="limpiar()">Limpiar</button>
+<button id="btn-aleatorio" onclick="aleatorio()">Aleatorio</button>
 
 <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
   
-  <button class="btn-whatsapp" onclick="enviarWhats()" style="width: 100%; max-width: 300px;">
+  <button id="btn-whats" class="btn-whatsapp" onclick="enviarWhats()" style="width: 100%; max-width: 300px;">
     Enviar por WhatsApp
   </button>
 
@@ -107,6 +107,7 @@ partidosJornada.forEach((juego, i) => {
 });
 
 function toggle(btn){
+  if (btn.disabled) return;
   btn.classList.toggle("seleccionado");
 }
 
@@ -221,6 +222,53 @@ function aleatorio(){
     botones[Math.floor(Math.random()*3)].classList.add("seleccionado");
   });
 }
+
+// --- SISTEMA AUTOMÁTICO DE RELOJ DE CIERRE INTEGRADO ---
+document.addEventListener("DOMContentLoaded", function() {
+  // Configurado exactamente para el Jueves 9 de Julio de 2026 a las 17:00 hrs
+  const fechaCierre = new Date("2026-07-09T17:00:00"); 
+  const fechaActual = new Date();
+
+  if (fechaActual > fechaCierre) {
+    // 1. Cambiar el indicador superior de cierre
+    const infoCierre = document.getElementById("info-cierre");
+    if(infoCierre) {
+      infoCierre.value = "❌ REGISTRO CERRADO";
+      infoCierre.style.color = "#721c24";
+      infoCierre.style.backgroundColor = "#f8d7da";
+    }
+
+    // 2. Desactivar campos de texto y botones de control principales
+    document.getElementById("nombre").disabled = true;
+    document.getElementById("btn-generar").disabled = true;
+    document.getElementById("btn-limpiar").disabled = true;
+    document.getElementById("btn-aleatorio").disabled = true;
+    
+    // 3. Modificar el botón de WhatsApp
+    const btnWhats = document.getElementById("btn-whats");
+    if(btnWhats) {
+      btnWhats.disabled = true;
+      btnWhats.innerText = "Quiniela Cerrada";
+      btnWhats.style.backgroundColor = "#6c757d";
+    }
+
+    // 4. Desactivar todos los botones de opciones (L, E, V) de los partidos
+    document.querySelectorAll(".opciones button").forEach(btn => {
+      btn.disabled = true;
+      btn.style.opacity = "0.5";
+    });
+
+    // 5. Inserción visual del bloque de advertencia superior
+    const avisoCierre = document.createElement("div");
+    avisoCierre.innerHTML = `
+      <div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 5px; text-align: center; font-weight: bold; font-size: 1.1em; font-family: Arial, sans-serif;">
+        🚨 EL REGISTRO HA CERRADO 🚨<br>
+        La quiniela cerró el jueves a las 5:00 pm. Ya no se aceptan más respuestas. ¡Gracias por participar!
+      </div>
+    `;
+    document.body.insertBefore(avisoCierre, document.body.firstChild);
+  }
+});
 
 </script>
 
