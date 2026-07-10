@@ -170,6 +170,30 @@ async function enviarWhats() {
     return;
   }
 
+  // --- CONTROL DE DUPLICADOS: VERIFICACIÓN CON GOOGLE SHEETS ---
+  try {
+    // Bloqueamos visualmente el botón para dar retroalimentación
+    document.getElementById("btn-whats").disabled = true;
+    document.getElementById("btn-whats").innerText = "Verificando nombre...";
+
+    // Consultamos al método GET de Apps Script los nombres registrados
+    let respuesta = await fetch(URL_SCRIPT);
+    let nombresRegistrados = await respuesta.json();
+
+    // Verificamos si el nombre ya existe en la lista (usando minúsculas)
+    if (nombresRegistrados.includes(nombreEnvio.toLowerCase())) {
+      alert(`⚠️ El nombre "${nombreEnvio}" ya está registrado.\n\nPor favor usa uno diferente (ejemplo: ${nombreEnvio} 2, ${nombreEnvio} B) para evitar confusiones con tus aciertos.`);
+      
+      // Desbloqueamos el botón para permitir la corrección
+      document.getElementById("btn-whats").disabled = false;
+      document.getElementById("btn-whats").innerText = "Enviar por WhatsApp";
+      return; 
+    }
+  } catch (err) {
+    console.error("No se pudo conectar para verificar duplicados, procediendo de manera estándar.", err);
+  }
+  // --- FIN CONTROL DE DUPLICADOS ---
+
   // GUARDAR EN GOOGLE SHEETS (Silencioso)
   try {
     fetch(URL_SCRIPT, {
@@ -203,6 +227,9 @@ async function enviarWhats() {
     
     document.querySelectorAll(".opciones button").forEach(b => b.classList.remove("seleccionado"));
     
+    document.getElementById("btn-whats").disabled = false;
+    document.getElementById("btn-whats").innerText = "Enviar por WhatsApp";
+    
     if (mensajeExito) {
       mensajeExito.style.display = "none";
     }
@@ -225,12 +252,10 @@ function aleatorio(){
 
 // --- SISTEMA AUTOMÁTICO DE RELOJ DE CIERRE INTEGRADO ---
 document.addEventListener("DOMContentLoaded", function() {
-  // 2. CONFIGURADO EXACTAMENTE PARA EL JUEVES 16 DE JULIO DE 2026 A LAS 17:00 HRS
   const fechaCierre = new Date("2026-07-16T17:00:00"); 
   const fechaActual = new Date();
 
   if (fechaActual > fechaCierre) {
-    // Cambiar el indicador superior de cierre
     const infoCierre = document.getElementById("info-cierre");
     if(infoCierre) {
       infoCierre.value = "❌ REGISTRO CERRADO";
@@ -238,13 +263,11 @@ document.addEventListener("DOMContentLoaded", function() {
       infoCierre.style.backgroundColor = "#f8d7da";
     }
 
-    // Desactivar campos de texto y botones de control principales
     document.getElementById("nombre").disabled = true;
     document.getElementById("btn-generar").disabled = true;
     document.getElementById("btn-limpiar").disabled = true;
     document.getElementById("btn-aleatorio").disabled = true;
     
-    // Modificar el botón de WhatsApp
     const btnWhats = document.getElementById("btn-whats");
     if(btnWhats) {
       btnWhats.disabled = true;
@@ -252,13 +275,11 @@ document.addEventListener("DOMContentLoaded", function() {
       btnWhats.style.backgroundColor = "#6c757d";
     }
 
-    // Desactivar todos los botones de opciones (L, E, V) de los partidos
     document.querySelectorAll(".opciones button").forEach(btn => {
       btn.disabled = true;
       btn.style.opacity = "0.5";
     });
 
-    // 3. INSERCIÓN VISUAL DEL BLOQUE DE ADVERTENCIA SUPERIOR CORREGIDO
     const avisoCierre = document.createElement("div");
     avisoCierre.innerHTML = `
       <div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 5px; text-align: center; font-weight: bold; font-size: 1.1em; font-family: Arial, sans-serif;">
