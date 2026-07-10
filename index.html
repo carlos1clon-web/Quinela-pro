@@ -34,9 +34,9 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 <div class="container">
 
-<input type="text" id="info-cierre" value="Cierre: Jueves 17:00" style="text-align: center; font-weight: bold;" disabled>
+<input type="text" id="info-cierre" value="Cierre: Jueves 16 de Julio 17:00" style="text-align: center; font-weight: bold;" disabled>
 <input type="text" value="$10 pesos por quiniela" disabled>
-<input type="text" value="Jornada 1" disabled>
+<input type="text" value="Jornada 2" disabled>
 
 <input type="text" id="total" placeholder="Total de quinielas" disabled>
 <input type="text" id="nombre" placeholder="Nombre del participante">
@@ -76,7 +76,7 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1yw7-KTpkEpuW_5CxIf43uGoWGdULCONyqKrIom0l-9CHQFD0/exec"; 
 
-// 1. LISTA ACTUALIZADA DE PARTIDOS (JORNADA 1)
+// LISTA DE PARTIDOS
 const partidosJornada = [
   "Necaxa vs atlante",
   "Tijuana vs tigres",
@@ -92,7 +92,7 @@ const partidosJornada = [
 const contenedor = document.getElementById("partidos");
 contenedor.innerHTML = ""; 
 
-// 2. GENERAMOS LOS PARTIDOS EN PANTALLA
+// GENERAMOS LOS PARTIDOS EN PANTALLA
 partidosJornada.forEach((juego, i) => {
   contenedor.innerHTML += `
     <div class="partido">
@@ -225,12 +225,12 @@ function aleatorio(){
 
 // --- SISTEMA AUTOMÁTICO DE RELOJ DE CIERRE INTEGRADO ---
 document.addEventListener("DOMContentLoaded", function() {
-  // Configurado exactamente para el Jueves 9 de Julio de 2026 a las 17:00 hrs
-  const fechaCierre = new Date("2026-07-09T17:00:00"); 
+  // 2. CONFIGURADO EXACTAMENTE PARA EL JUEVES 16 DE JULIO DE 2026 A LAS 17:00 HRS
+  const fechaCierre = new Date("2026-07-16T17:00:00"); 
   const fechaActual = new Date();
 
   if (fechaActual > fechaCierre) {
-    // 1. Cambiar el indicador superior de cierre
+    // Cambiar el indicador superior de cierre
     const infoCierre = document.getElementById("info-cierre");
     if(infoCierre) {
       infoCierre.value = "❌ REGISTRO CERRADO";
@@ -238,13 +238,13 @@ document.addEventListener("DOMContentLoaded", function() {
       infoCierre.style.backgroundColor = "#f8d7da";
     }
 
-    // 2. Desactivar campos de texto y botones de control principales
+    // Desactivar campos de texto y botones de control principales
     document.getElementById("nombre").disabled = true;
     document.getElementById("btn-generar").disabled = true;
     document.getElementById("btn-limpiar").disabled = true;
     document.getElementById("btn-aleatorio").disabled = true;
     
-    // 3. Modificar el botón de WhatsApp
+    // Modificar el botón de WhatsApp
     const btnWhats = document.getElementById("btn-whats");
     if(btnWhats) {
       btnWhats.disabled = true;
@@ -252,18 +252,18 @@ document.addEventListener("DOMContentLoaded", function() {
       btnWhats.style.backgroundColor = "#6c757d";
     }
 
-    // 4. Desactivar todos los botones de opciones (L, E, V) de los partidos
+    // Desactivar todos los botones de opciones (L, E, V) de los partidos
     document.querySelectorAll(".opciones button").forEach(btn => {
       btn.disabled = true;
       btn.style.opacity = "0.5";
     });
 
-    // 5. Inserción visual del bloque de advertencia superior
+    // 3. INSERCIÓN VISUAL DEL BLOQUE DE ADVERTENCIA SUPERIOR CORREGIDO
     const avisoCierre = document.createElement("div");
     avisoCierre.innerHTML = `
       <div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 5px; text-align: center; font-weight: bold; font-size: 1.1em; font-family: Arial, sans-serif;">
         🚨 EL REGISTRO HA CERRADO 🚨<br>
-        La quiniela cerró el jueves a las 5:00 pm. Ya no se aceptan más respuestas. ¡Gracias por participar!
+        La quiniela cerró el jueves 16 de julio a las 5:00 pm. Ya no se aceptan más respuestas. ¡Gracias por participar!
       </div>
     `;
     document.body.insertBefore(avisoCierre, document.body.firstChild);
