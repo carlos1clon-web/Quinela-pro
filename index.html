@@ -1,291 +1,93 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quinielas Liga MX</title>
-  
-<style>
-body{
-  font-family: Arial, sans-serif;
-  background:#0f172a;
-  color:white;
-  margin:0;
-  text-align:center;
-}
-.header{background:#1e293b;padding:15px;}
-h1{margin:0;color:#38bdf8;}
-.container{padding:20px;max-width:600px;margin:auto;}
-input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#e5e7eb;}
-button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#38bdf8;font-weight:bold;cursor:pointer;}
-.partido{background:#1e293b;margin:10px 0;padding:10px;border-radius:12px;}
-.opciones button{width:30%;margin:2px;}
-.seleccionado{background:#22c55e !important;}
-.btn-whatsapp{background:#25D366;color:white;}
-.lista{background:#020617;margin-top:20px;padding:10px;border-radius:10px;text-align:left;font-size:14px;}
-</style>
-</head>
-
-<body>
-
-<div class="header">
-  <h1>Quinielas Liga MX</h1>
-</div>
-
-<div class="container">
-
-<!-- Indicador de Cierre Actualizado -->
-<input type="text" id="info-cierre" value="Cierre: Viernes 7 de Agosto 21:00 Hrs" style="text-align: center; font-weight: bold; color: #1e293b;" disabled>
-<input type="text" value="$10 pesos por quiniela" disabled>
-<input type="text" value="Jornada Especial" disabled>
-
-<input type="text" id="total" placeholder="Total de quinielas" disabled>
-<input type="text" id="nombre" placeholder="Nombre del participante">
-
-<div id="partidos"></div>
-
-<button id="btn-generar" onclick="agregarQuiniela()">Generar Quiniela</button>
-<button id="btn-limpiar" onclick="limpiar()">Limpiar</button>
-<button id="btn-aleatorio" onclick="aleatorio()">Aleatorio</button>
-
-<div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
-  
-  <button id="btn-whats" class="btn-whatsapp" onclick="enviarWhats()" style="width: 100%; max-width: 300px;">
-    Enviar por WhatsApp
-  </button>
-
-  <div id="lista" class="lista" style="width: 100%;"></div>
-
-  <div id="mensaje-exito" style="display: none; background-color: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #16a34a; font-weight: bold; width: 100%; box-sizing: border-box;">
-    ✅ ¡Quiniela guardada y enviada con éxito!
-  </div>
-
-  <div style="text-align: center; background-color: #f0f2f5; padding: 15px; border-radius: 12px; width: 100%; box-sizing: border-box; border: 1px solid #ddd;">
-    <p style="margin-bottom: 10px; font-weight: bold; color: #1877F2;">
-      📣 ¡Únete al grupo para ver resultados!
-    </p>
-    <a href="https://www.facebook.com/share/g/1B76CTGhrZ/?mibextid=wwXIfr" target="_blank" style="background-color: #1877F2; color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; display: inline-block; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">
-      ⚽ Ir al Grupo de Facebook
-    </a>
-  </div>
-
-</div>
-
-</div> 
-
-<script>
-
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1yw7-KTpkEpuW_5CxIf43uGoWGdULCONyqKrIom0l-9CHQFD0/exec"; 
-
-// LISTA DE PARTIDOS
-const partidosJornada = [
-  "Man United vs PSG",
-  "Orlando vs León",
-  "Inter de Miami vs Monterrey",
-  "Chivas vs Dallas",
-  "Real Salt Lake vs Atlante",
-  "Toluca vs LAFC",
-  "Seattle vs Querétaro",
-  "Cruz Azul vs New York",
-  "América vs Portland"
-];
-
-const contenedor = document.getElementById("partidos");
-contenedor.innerHTML = ""; 
-
-// GENERAMOS LOS PARTIDOS EN PANTALLA
-partidosJornada.forEach((juego, i) => {
-  contenedor.innerHTML += `
-    <div class="partido">
-      <p><strong>${juego}</strong></p>
-      <div class="opciones">
-        <button onclick="toggle(this)">L</button>
-        <button onclick="toggle(this)">E</button>
-        <button onclick="toggle(this)">V</button>
-      </div>
-    </div>
-  `;
-});
-
-function toggle(btn){
-  if (btn.disabled) return;
-  btn.classList.toggle("seleccionado");
-}
-
-function generarCombinaciones(){
-  let partidos = [];
-
-  document.querySelectorAll(".opciones").forEach(op=>{
-    let sel = [...op.querySelectorAll(".seleccionado")].map(b=>b.innerText);
-    partidos.push(sel);
-  });
-
-  if(partidos.some(p => p.length === 0)){
-    alert("Falta seleccionar en algunos partidos");
-    return [];
-  }
-
-  let resultado = [[]];
-
-  partidos.forEach(opciones=>{
-    let temp = [];
-    resultado.forEach(r=>{
-      opciones.forEach(o=>{
-        temp.push([...r, o]);
-      });
-    });
-    resultado = temp;
-  });
-
-  return resultado;
-}
-
-function agregarQuiniela(){
-  let combinaciones = generarCombinaciones();
-  let lista = document.getElementById("lista");
-
-  if(combinaciones.length === 0) return;
-
-  lista.innerHTML = "";
-
-  combinaciones.forEach((c,i)=>{
-    lista.innerHTML += `#${i+1} → ${c.join(" - ")}<br>`;
-  });
-
-  document.getElementById("total").value = combinaciones.length;
-}
-
-async function enviarWhats() {
-  let nombreInput = document.getElementById("nombre");
-  let totalInput = document.getElementById("total");
-  let listaContenedor = document.getElementById("lista");
-  let mensajeExito = document.getElementById("mensaje-exito"); 
-
-  let nombreEnvio = nombreInput.value.trim();
-  let combinacionesEnvio = generarCombinaciones();
-  let listaEnvio = listaContenedor.innerText;
-  let totalEnvio = totalInput.value;
-
-  if (nombreEnvio === "" || listaEnvio === "") {
-    alert("⚠️ Completa la quiniela y dale a 'Generar' primero");
-    return;
-  }
-
-  // --- CONTROL DE DUPLICADOS: VERIFICACIÓN CON GOOGLE SHEETS ---
+function doPost(e) {
   try {
-    document.getElementById("btn-whats").disabled = true;
-    document.getElementById("btn-whats").innerText = "Verificando nombre...";
+    // --- CANDADO DE FECHA Y HORA DE CIERRE ---
+    // Viernes 7 de Agosto de 2026 a las 21:00 Hrs (Mes 7 es Agosto en JS)
+    var fechaCierre = new Date(2026, 7, 7, 21, 0, 0); 
+    var fechaActual = new Date();
 
-    let respuesta = await fetch(URL_SCRIPT);
-    let nombresRegistrados = await respuesta.json();
+    if (fechaActual > fechaCierre) {
+      return ContentService.createTextOutput(JSON.stringify({ 
+        "status": "error", 
+        "message": "La quiniela ya cerró el viernes 7 de agosto a las 21:00 hrs. ¡Suerte para la próxima!" 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    // -----------------------------------------
 
-    if (nombresRegistrados.includes(nombreEnvio.toLowerCase())) {
-      alert(`⚠️ El nombre "${nombreEnvio}" ya está registrado.\n\nPor favor usa uno diferente (ejemplo: ${nombreEnvio} 2) para evitar confusiones.`);
+    var datos = JSON.parse(e.postData.contents);
+    var nombreInput = datos.nombre;
+    var nombreBuscar = nombreInput.toString().trim().toLowerCase(); 
+    var pronosticos = datos.quiniela[0]; 
+
+    var libro = SpreadsheetApp.getActiveSpreadsheet();
+    var hoja = libro.getSheetByName("QUINIELAS");
+    
+    if (!hoja) {
+      hoja = libro.getSheets()[0];
+    }
+
+    // --- CANDADO PARA NOMBRES REPETIDOS ---
+    var ultimaFila = hoja.getLastRow();
+    if (ultimaFila >= 2) {
+      var nombresExistentes = hoja.getRange(2, 1, ultimaFila - 1, 1).getValues();
       
-      document.getElementById("btn-whats").disabled = false;
-      document.getElementById("btn-whats").innerText = "Enviar por WhatsApp";
-      return; 
+      for (var j = 0; j < nombresExistentes.length; j++) {
+        var nombreActual = nombresExistentes[j][0].toString().trim().toLowerCase();
+        
+        if (nombreActual === nombreBuscar) {
+          return ContentService.createTextOutput(JSON.stringify({ 
+            "status": "error", 
+            "message": "Este nombre ya está registrado. Por favor usa otro." 
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
     }
-  } catch (err) {
-    console.error("No se pudo conectar para verificar duplicados, procediendo de manera estándar.", err);
-  }
+    // --------------------------------------
 
-  // GUARDAR EN GOOGLE SHEETS
-  try {
-    fetch(URL_SCRIPT, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify({
-        nombre: nombreEnvio,
-        quiniela: combinacionesEnvio
-      })
-    });
-    console.log("Datos enviados a Sheets...");
-  } catch (e) {
-    console.error("Error al guardar:", e);
-  }
-
-  // ENVIAR POR WHATSAPP
-  let pago = totalEnvio * 10;
-  let mensaje = `📊 *Quiniela Liga MX*\n\n👤 *Usuario:* ${nombreEnvio}\n\n${listaEnvio}\n\n*Total:* ${totalEnvio}\n*A pagar:* $${pago}`;
-  let numero = "525610791509";
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`);
-
-  if (mensajeExito) {
-    mensajeExito.style.display = "block"; 
-  }
-
-  setTimeout(() => {
-    nombreInput.value = "";
-    totalInput.value = "";
-    listaContenedor.innerText = "";
-    
-    document.querySelectorAll(".opciones button").forEach(b => b.classList.remove("seleccionado"));
-    
-    document.getElementById("btn-whats").disabled = false;
-    document.getElementById("btn-whats").innerText = "Enviar por WhatsApp";
-    
-    if (mensajeExito) {
-      mensajeExito.style.display = "none";
+    // Organizar la fila para los 9 partidos
+    var nuevaFila = [nombreInput];
+    for (var i = 0; i < 9; i++) {
+      nuevaFila.push(pronosticos[i] || "");
     }
-  }, 4000); 
+
+    // Encontrar la primera fila vacía en la Columna A
+    var valoresA = hoja.getRange("A1:A105").getValues(); 
+    var filaVacia = 2; 
+    
+    for (var k = 1; k < valoresA.length; k++) {
+      if (valoresA[k][0] === "") {
+        filaVacia = k + 1;
+        break;
+      }
+    }
+
+    hoja.getRange(filaVacia, 1, 1, nuevaFila.length).setValues([nuevaFila]);
+
+    return ContentService.createTextOutput(JSON.stringify({ "status": "success" }))
+                         .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": error.toString() }))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
-function limpiar(){
-  location.reload();
-}
-
-function aleatorio(){
-  document.querySelectorAll(".opciones").forEach(op=>{
-    let botones = op.querySelectorAll("button");
-    botones.forEach(b => b.classList.remove("seleccionado"));
-    botones[Math.floor(Math.random()*3)].classList.add("seleccionado");
-  });
-}
-
-// --- SISTEMA AUTOMÁTICO DE RELOJ DE CIERRE ---
-document.addEventListener("DOMContentLoaded", function() {
-  // Configurado exactamente para: Viernes 7 de Agosto a las 21:00 Hrs (9:00 PM)
-  const fechaCierre = new Date("2026-08-07T21:00:00"); 
-  const fechaActual = new Date();
-
-  if (fechaActual > fechaCierre) {
-    const infoCierre = document.getElementById("info-cierre");
-    if(infoCierre) {
-      infoCierre.value = "❌ REGISTRO CERRADO";
-      infoCierre.style.color = "#721c24";
-      infoCierre.style.backgroundColor = "#f8d7da";
+function doGet(e) {
+  var libro = SpreadsheetApp.getActiveSpreadsheet();
+  var hoja = libro.getSheetByName("QUINIELAS");
+  if (!hoja) hoja = libro.getSheets()[0];
+  
+  var ultimaFila = hoja.getLastRow();
+  var nombres = [];
+  
+  if (ultimaFila >= 2) {
+    var datos = hoja.getRange(2, 1, ultimaFila - 1, 1).getValues();
+    for (var i = 0; i < datos.length; i++) {
+      if (datos[i][0] !== "") {
+        nombres.push(datos[i][0].toString().trim().toLowerCase());
+      }
     }
-
-    document.getElementById("nombre").disabled = true;
-    document.getElementById("btn-generar").disabled = true;
-    document.getElementById("btn-limpiar").disabled = true;
-    document.getElementById("btn-aleatorio").disabled = true;
-    
-    const btnWhats = document.getElementById("btn-whats");
-    if(btnWhats) {
-      btnWhats.disabled = true;
-      btnWhats.innerText = "Quiniela Cerrada";
-      btnWhats.style.backgroundColor = "#6c757d";
-    }
-
-    document.querySelectorAll(".opciones button").forEach(btn => {
-      btn.disabled = true;
-      btn.style.opacity = "0.5";
-    });
-
-    const avisoCierre = document.createElement("div");
-    avisoCierre.innerHTML = `
-      <div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 5px; text-align: center; font-weight: bold; font-size: 1.1em; font-family: Arial, sans-serif;">
-        🚨 EL REGISTRO HA CERRADO 🚨<br>
-        La quiniela cerró el viernes 7 de agosto a las 21:00 hrs (9:00 pm). Ya no se aceptan más respuestas. ¡Gracias por participar!
-      </div>
-    `;
-    document.body.insertBefore(avisoCierre, document.body.firstChild);
   }
-});
-
-</script>
-
-</body>
-</html>
+  
+  return ContentService.createTextOutput(JSON.stringify(nombres))
+                       .setMimeType(ContentService.MimeType.JSON);
+}
