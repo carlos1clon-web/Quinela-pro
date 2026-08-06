@@ -34,9 +34,10 @@ button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;backg
 
 <div class="container">
 
-<input type="text" id="info-cierre" value="Cierre: Jueves 16 de Julio 17:00" style="text-align: center; font-weight: bold;" disabled>
+<!-- Indicador de Cierre Actualizado -->
+<input type="text" id="info-cierre" value="Cierre: Viernes 7 de Agosto 21:00 Hrs" style="text-align: center; font-weight: bold; color: #1e293b;" disabled>
 <input type="text" value="$10 pesos por quiniela" disabled>
-<input type="text" value="Jornada 1" disabled>
+<input type="text" value="Jornada Especial" disabled>
 
 <input type="text" id="total" placeholder="Total de quinielas" disabled>
 <input type="text" id="nombre" placeholder="Nombre del participante">
@@ -78,15 +79,15 @@ const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfcJdesNfW5_wObYb1y
 
 // LISTA DE PARTIDOS
 const partidosJornada = [
-  "Necaxa vs atlante",
-  "Tijuana vs tigres",
-  "San Luis vs cruz azul",
-  "León vs Atlas",
-  "Juarez vs puebla",
-  "Pumas vs Pachuca",
-  "Monterrey vs santos",
-  "Chivas vs Toluca",
-  "Queretaro vs america"
+  "Man United vs PSG",
+  "Orlando vs León",
+  "Inter de Miami vs Monterrey",
+  "Chivas vs Dallas",
+  "Real Salt Lake vs Atlante",
+  "Toluca vs LAFC",
+  "Seattle vs Querétaro",
+  "Cruz Azul vs New York",
+  "América vs Portland"
 ];
 
 const contenedor = document.getElementById("partidos");
@@ -172,19 +173,15 @@ async function enviarWhats() {
 
   // --- CONTROL DE DUPLICADOS: VERIFICACIÓN CON GOOGLE SHEETS ---
   try {
-    // Bloqueamos visualmente el botón para dar retroalimentación
     document.getElementById("btn-whats").disabled = true;
     document.getElementById("btn-whats").innerText = "Verificando nombre...";
 
-    // Consultamos al método GET de Apps Script los nombres registrados
     let respuesta = await fetch(URL_SCRIPT);
     let nombresRegistrados = await respuesta.json();
 
-    // Verificamos si el nombre ya existe en la lista (usando minúsculas)
     if (nombresRegistrados.includes(nombreEnvio.toLowerCase())) {
-      alert(`⚠️ El nombre "${nombreEnvio}" ya está registrado.\n\nPor favor usa uno diferente (ejemplo: ${nombreEnvio} 2, ${nombreEnvio} B) para evitar confusiones con tus aciertos.`);
+      alert(`⚠️ El nombre "${nombreEnvio}" ya está registrado.\n\nPor favor usa uno diferente (ejemplo: ${nombreEnvio} 2) para evitar confusiones.`);
       
-      // Desbloqueamos el botón para permitir la corrección
       document.getElementById("btn-whats").disabled = false;
       document.getElementById("btn-whats").innerText = "Enviar por WhatsApp";
       return; 
@@ -192,9 +189,8 @@ async function enviarWhats() {
   } catch (err) {
     console.error("No se pudo conectar para verificar duplicados, procediendo de manera estándar.", err);
   }
-  // --- FIN CONTROL DE DUPLICADOS ---
 
-  // GUARDAR EN GOOGLE SHEETS (Silencioso)
+  // GUARDAR EN GOOGLE SHEETS
   try {
     fetch(URL_SCRIPT, {
       method: "POST",
@@ -219,7 +215,6 @@ async function enviarWhats() {
     mensajeExito.style.display = "block"; 
   }
 
-  // REINICIAR EL SISTEMA (Después de 4 segundos)
   setTimeout(() => {
     nombreInput.value = "";
     totalInput.value = "";
@@ -233,8 +228,6 @@ async function enviarWhats() {
     if (mensajeExito) {
       mensajeExito.style.display = "none";
     }
-    
-    console.log("Sistema reiniciado para el próximo usuario.");
   }, 4000); 
 }
 
@@ -250,9 +243,10 @@ function aleatorio(){
   });
 }
 
-// --- SISTEMA AUTOMÁTICO DE RELOJ DE CIERRE INTEGRADO ---
+// --- SISTEMA AUTOMÁTICO DE RELOJ DE CIERRE ---
 document.addEventListener("DOMContentLoaded", function() {
-  const fechaCierre = new Date("2026-07-16T17:00:00"); 
+  // Configurado exactamente para: Viernes 7 de Agosto a las 21:00 Hrs (9:00 PM)
+  const fechaCierre = new Date("2026-08-07T21:00:00"); 
   const fechaActual = new Date();
 
   if (fechaActual > fechaCierre) {
@@ -284,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function() {
     avisoCierre.innerHTML = `
       <div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 5px; text-align: center; font-weight: bold; font-size: 1.1em; font-family: Arial, sans-serif;">
         🚨 EL REGISTRO HA CERRADO 🚨<br>
-        La quiniela cerró el jueves 16 de julio a las 5:00 pm. Ya no se aceptan más respuestas. ¡Gracias por participar!
+        La quiniela cerró el viernes 7 de agosto a las 21:00 hrs (9:00 pm). Ya no se aceptan más respuestas. ¡Gracias por participar!
       </div>
     `;
     document.body.insertBefore(avisoCierre, document.body.firstChild);
